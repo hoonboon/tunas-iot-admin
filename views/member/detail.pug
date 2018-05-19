@@ -1,0 +1,133 @@
+extends ../layout
+
+block content
+  .page-header
+    h3 #{title}
+    p Member Id 会员编号: #{memberId}
+  #member-detail.form-horizontal
+    .form-group
+      label.col-sm-3.control-label Date Join 报单日期
+      .col-sm-7 
+        .form-control #{member.dateJoinDisplay}
+    .form-group
+      label.col-sm-3.control-label Name CH 中文姓名
+      .col-sm-7
+        .form-control #{member.profile.nameCh}
+    .form-group
+      label.col-sm-3.control-label Name EN 英文姓名
+      .col-sm-7
+        .form-control #{member.profile.name}
+    .form-group
+      label.col-sm-3.control-label Gender 性别
+      .col-sm-7
+        select.form-control(disabled=true)
+          option(
+            value='M' label='Male 男'
+            selected=(
+                'M' == member.profile.gender
+              ) ? 'selected' : false
+          )
+          option(
+            value='F' label='Female 女'
+            selected=(
+                'F' == member.profile.gender
+              ) ? 'selected' : false
+          )
+          option(
+            value='O' label='Other 其他'
+            selected=(
+                'O' == member.profile.gender
+              ) ? 'selected' : false
+          )
+    .form-group
+      label.col-sm-3.control-label Date of Birth 生日日期
+      .col-sm-7
+        .form-control #{member.profile.dobDisplay}
+    .form-group
+      label.col-sm-3.control-label Mobile No. 手机号码
+      .col-sm-7
+        .form-control #{member.contact.mobileNo}
+    .form-group
+      label.col-sm-3.control-label NRIC 身份证号
+      .col-sm-7
+        .form-control #{member.nric}
+    .form-group
+      label.col-sm-3.control-label Bank Account No. 银行帐号
+      .col-sm-7
+        .form-control #{member.bank.accNo}
+    .form-group
+      label.col-sm-3.control-label Bank Name 开户行名称
+      .col-sm-7
+        .form-control #{member.bank.bankName}
+    .form-group
+      label.col-sm-3.control-label Bank Address 开户行地址
+      .col-sm-7
+        .form-control #{member.bank.bankAddr}
+    .form-group
+      label.col-sm-3.control-label Home Address 发货住址
+      .col-sm-7
+        .form-control #{member.contact.homeAddr}
+    .form-group
+      label.col-sm-3.control-label Wechat ID 国外微信号
+      .col-sm-7
+        .form-control #{member.social.wechat}
+    .form-group
+      label.col-sm-3.control-label Sponsor Name 推荐人
+      .col-sm-7
+        .form-control #{member.sponsor.name}
+    .form-group
+      label.col-sm-3.control-label Sponsor Contact No. 推荐人电话
+      .col-sm-7
+        .form-control #{member.sponsor.contactNo}
+    .form-group
+      label.col-sm-3.control-label Organization 大区经理
+      .col-sm-7
+        .form-control #{member.sponsor.orgNo}
+    .form-group
+      label.col-sm-3.control-label Team 团队长
+      .col-sm-7
+        .form-control #{member.sponsor.teamNo}
+    .form-group
+      label.col-sm-3.control-label Starter Kit 产品
+      .col-sm-7
+        select.form-control(disabled=true)
+          option(
+            value='1' label='White Necklace 白项链'
+            selected=(
+                '1' == member.starterKit.kitCode
+              ) ? 'selected' : false
+          )
+          option(
+            value='2' label='Black Necklace 黑项链'
+            selected=(
+                '2' == member.starterKit.kitCode
+              ) ? 'selected' : false
+          )
+          option(
+            value='3' label='Coconut Oil 椰子油'
+            selected=(
+                '3' == member.starterKit.kitCode
+              ) ? 'selected' : false
+          )
+    .form-group
+      label.col-sm-3.control-label Amount 金额
+      .col-sm-7
+        select.form-control(disabled=true)
+          option(
+            value='MYR440' label='MYR 440'
+            selected=(
+                'MYR440' == member.starterKit.kitAmount
+              ) ? 'selected' : false
+          )
+          option(
+            value='RMB680' label='RMB 680'
+            selected=(
+                'RMB680' == member.starterKit.kitAmount
+              ) ? 'selected' : false
+          )
+    .form-group
+      .col-sm-offset-3.col-sm-7
+        a.btn.btn-primary(href=member.url+'/update') Edit 编辑
+        span
+        | 
+        a.btn.btn-danger(href='/members') Back 取消

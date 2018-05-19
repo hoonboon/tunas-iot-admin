@@ -1,0 +1,170 @@
+extends ../layout
+
+block content
+  .page-header
+    if memberId
+      h3 #{title}
+      p Member Id 会员编号: #{memberId}
+    else
+      h3 #{title}
+  p.text-center
+    font(color="red") 
+      i ** Required fields.
+  form.form-horizontal(id='member-form', method='POST')
+    input(type='hidden', name='_csrf', value=_csrf)
+    .form-group
+      label.col-sm-3.control-label(for='dateJoin') ** Date Join 报单日期
+      .col-sm-7
+        input.form-control(type='date', name='dateJoin', id='dateJoin', placeholder='Date Join', required, value=(member === undefined ? '' : member.dateJoinInput))
+    .form-group
+      label.col-sm-3.control-label(for='nameCh') ** Name CH 中文姓名
+      .col-sm-7
+        input.form-control(type='text', name='nameCh', id='nameCh', placeholder='Name CH', autofocus, required, value=(member === undefined ? '' : member.profile.nameCh))
+    .form-group
+      label.col-sm-3.control-label(for='name') ** Name EN 英文姓名
+      .col-sm-7
+        input.form-control(type='text', name='name', id='name', placeholder='Name EN', required, value=(member === undefined ? '' : member.profile.name))
+    .form-group
+      label.col-sm-3.control-label(for='gender') Gender 性别
+      .col-sm-7
+        select.form-control(name='gender', id='gender', placeholder='Gender')
+          if member
+            option(
+              value='M' label='Male 男'
+              selected=(
+                  'M' == member.profile.gender
+                ) ? 'selected' : false
+            )
+            option(
+              value='F' label='Female 女'
+              selected=(
+                  'F' == member.profile.gender
+                ) ? 'selected' : false
+            )
+            option(
+              value='O' label='Other 其他'
+              selected=(
+                  'O' == member.profile.gender
+                ) ? 'selected' : false
+            )
+          else
+            option(
+              value='M' label='Male 男'
+            )
+            option(
+              value='F' label='Female 女'
+            )
+            option(
+              value='O' label='Other 其他'
+            )
+    .form-group
+      label.col-sm-3.control-label(for='dob') ** Date of Birth 生日日期
+      .col-sm-7
+        input.form-control(type='date', name='dob', id='dob', placeholder='Date of Birth', required, value=(member === undefined ? '' : member.profile.dobInput))
+    .form-group
+      label.col-sm-3.control-label(for='mobileNo') ** Mobile No. 手机号码
+      .col-sm-7
+        input.form-control(type='text', name='mobileNo', id='mobileNo', placeholder='Mobile No.', required, value=(member === undefined ? '' : member.contact.mobileNo))
+    .form-group
+      label.col-sm-3.control-label(for='nric') ** NRIC 身份证号
+      .col-sm-7
+        input.form-control(type='text', name='nric', id='nric', placeholder='NRIC', required, value=(member === undefined ? '' : member.nric))
+    .form-group
+      label.col-sm-3.control-label(for='bankAccNo') Bank Account No. 银行帐号
+      .col-sm-7
+        input.form-control(type='text', name='bankAccNo', id='bankAccNo', placeholder='Bank Account No.', value=(member === undefined ? '' : member.bank.accNo))
+    .form-group
+      label.col-sm-3.control-label(for='bankName') Bank Name 开户行名称
+      .col-sm-7
+        input.form-control(type='text', name='bankName', id='bankName', placeholder='Bank Name', value=(member === undefined ? '' : member.bank.bankName))
+    .form-group
+      label.col-sm-3.control-label(for='bankAddr') Bank Address 开户行地址
+      .col-sm-7
+        input.form-control(type='text', name='bankAddr', id='bankAddr', placeholder='Bank Address', value=(member === undefined ? '' : member.bank.bankAddr))
+    .form-group
+      label.col-sm-3.control-label(for='homeAddr') Home Address 发货住址
+      .col-sm-7
+        input.form-control(type='text', name='homeAddr', id='homeAddr', placeholder='Home Address', value=(member === undefined ? '' : member.contact.homeAddr))
+    .form-group
+      label.col-sm-3.control-label(for='wechat') Wechat ID 国外微信号
+      .col-sm-7
+        input.form-control(type='text', name='wechat', id='wechat', placeholder='Wechat ID', value=(member === undefined ? '' : member.social.wechat))
+    .form-group
+      label.col-sm-3.control-label(for='sponsorName') Sponsor Name 推荐人
+      .col-sm-7
+        input.form-control(type='text', name='sponsorName', id='sponsorName', placeholder='Sponsor Name', value=(member === undefined ? '' : member.sponsor.name))
+    .form-group
+      label.col-sm-3.control-label(for='sponsorContactNo') Sponsor Contact No. 推荐人电话
+      .col-sm-7
+        input.form-control(type='text', name='sponsorContactNo', id='sponsorContactNo', placeholder='Sponsor Contact No.', value=(member === undefined ? '' : member.sponsor.contactNo))
+    .form-group
+      label.col-sm-3.control-label(for='sponsorOrg') Organization 大区经理
+      .col-sm-7
+        input.form-control(type='text', name='sponsorOrg', id='sponsorOrg', placeholder='Organization', value=(member === undefined ? '' : member.sponsor.orgNo))
+    .form-group
+      label.col-sm-3.control-label(for='sponsorTeam') Team 团队长
+      .col-sm-7
+        input.form-control(type='text', name='sponsorTeam', id='sponsorTeam', placeholder='Team', value=(member === undefined ? '' : member.sponsor.teamNo))
+    .form-group
+      label.col-sm-3.control-label(for='starterKitCode') Starter Kit 产品
+      .col-sm-7
+        select.form-control(name='starterKitCode', id='starterKitCode', placeholder='Starter Kit')
+          if member
+            option(
+              value='1' label='White Necklace 白项链'
+              selected=(
+                  '1' == member.starterKit.kitCode
+                ) ? 'selected' : false
+            )
+            option(
+              value='2' label='Black Necklace 黑项链'
+              selected=(
+                  '2' == member.starterKit.kitCode
+                ) ? 'selected' : false
+            )
+            option(
+              value='3' label='Coconut Oil 椰子油'
+              selected=(
+                  '3' == member.starterKit.kitCode
+                ) ? 'selected' : false
+            )
+          else
+            option(
+              value='1' label='White Necklace 白项链'
+            )
+            option(
+              value='2' label='Black Necklace 黑项链'
+            )
+            option(
+              value='3' label='Coconut Oil 椰子油'
+            )
+    .form-group
+      label.col-sm-3.control-label(for='starterKitAmount') Amount 金额
+      .col-sm-7
+        select.form-control(name='starterKitAmount', id='starterKitAmount', placeholder='Amount')
+          if member
+            option(
+              value='MYR440' label='MYR 440'
+              selected=(
+                  'MYR440' == member.starterKit.kitAmount
+                ) ? 'selected' : false
+            )
+            option(
+              value='RMB680' label='RMB 680'
+              selected=(
+                  'RMB680' == member.starterKit.kitAmount
+                ) ? 'selected' : false
+            )
+          else
+            option(
+              value='MYR440' label='MYR 440'
+            )
+            option(
+              value='RMB680' label='RMB 680'
+            )
+    .form-group
+      .col-sm-offset-3.col-sm-7
+        button.btn.btn-success(type='submit') Save 储存
+        span
+        | 
+        a.btn.btn-danger(href='/members') Cancel 取消

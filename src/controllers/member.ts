@@ -1,0 +1,311 @@
+import async from "async";
+import { default as Member, MemberModel } from "../models/Member";
+import { Request, Response, NextFunction } from "express";
+import { WriteError } from "mongodb";
+
+import { body, validationResult } from "express-validator/check";
+import { sanitizeBody } from "express-validator/filter";
+
+import moment from "moment";
+
+/**
+ * GET /members
+ * Member listing page.
+ */
+export let getMembers = (req: Request, res: Response, next: NextFunction) => {
+    // const provider = req.params.provider;
+    Member.find()
+        .sort([["dateJoin", "ascending"], ["profile.name", "ascending"]])
+        .exec(function (err, item_list: any) {
+            if (err) {
+                return next(err);
+            }
+            res.render("member/list", { title: "Member List 会员", member_list: item_list });
+        });
+};
+
+/**
+ * GET /member/create
+ * Create Member page.
+ */
+export let getMemberCreate = (req: Request, res: Response) => {
+    // TODO: for local testing only
+    // const memberInput = new Member({
+    //     nric: "1001",
+    //     dateJoin: moment(),
+    //     createdBy: req.user.id,
+    //     profile: {
+    //         name: "Some Body 1",
+    //         nameCh: "某人一",
+    //         gender: "F",
+    //         dob: moment().subtract(20, "years")
+    //     },
+    //     contact: {
+    //         mobileNo: "1234567890",
+    //         homeAddr: "Some Body address"
+    //     },
+    //     bank: {
+    //         accNo: "123456",
+    //         bankName: "Some Bank name",
+    //         bankAddr: "Some Bank address"
+    //     },
+    //     social: {
+    //         wechat: "SomeWechatID"
+    //     },
+    //     sponsor: {
+    //         name: "Some sponsor Name",
+    //         contactNo: "Some sponsor Contact No",
+    //         orgNo: "Some sponsor Org",
+    //         teamNo: "Some sponsor Team"
+    //     },
+    //     starterKit: {
+    //         kitCode: "2",
+    //         kitAmount: "RMB680"
+    //     }
+    // });
+
+    const memberInput = new Member({
+            dateJoin: moment(),
+    });
+
+    res.render("member/form", {
+        title: "Create Member 注册会员",
+        member: memberInput
+    });
+};
+
+/**
+ * POST /member/create
+ * Create a new Member.
+ */
+export let postMemberCreate = [
+    // validate values
+    body("dateJoin")
+        .isLength({ min: 1 }).trim().withMessage("Date Join is required.")
+        .isISO8601().withMessage("Date Join is invalid."),
+    body("nameCh")
+        .isLength({ min: 1 }).trim().withMessage("Name CH is required."),
+    body("name")
+        .isLength({ min: 1 }).trim().withMessage("Name EN is required."),
+    body("dob")
+        .isLength({ min: 1 }).trim().withMessage("Date of Birth is required.")
+        .isISO8601().withMessage("Date of Birth is invalid."),
+    body("mobileNo")
+        .isLength({ min: 1 }).trim().withMessage("Mobile No. is required."),
+    body("nric")
+        .isLength({ min: 1 }).trim().withMessage("NRIC is required."),
+
+    // sanitize values
+    sanitizeBody("*").trim().escape(),
+    sanitizeBody("dateJoin").toDate(),
+    sanitizeBody("dob").toDate(),
+
+    // process request
+    (req: Request, res: Response, next: NextFunction) => {
+        const errors = validationResult(req);
+
+        const memberInput = new Member({
+            nric: req.body.nric,
+            dateJoin: req.body.dateJoin,
+            createdBy: req.user.id,
+            profile: {
+                name: req.body.name,
+                nameCh: req.body.nameCh,
+                gender: req.body.gender,
+                dob: req.body.dob
+            },
+            contact: {
+                mobileNo: req.body.mobileNo,
+                homeAddr: req.body.homeAddr
+            },
+            bank: {
+                accNo: req.body.bankAccNo,
+                bankName: req.body.bankName,
+                bankAddr: req.body.bankAddr
+            },
+            social: {
+                wechat: req.body.wechat
+            },
+            sponsor: {
+                name: req.body.sponsorName,
+                contactNo: req.body.sponsorContactNo,
+                orgNo: req.body.sponsorOrg,
+                teamNo: req.body.sponsorTeam
+            },
+            starterKit: {
+                kitCode: req.body.starterKitCode,
+                kitAmount: req.body.starterKitAmount
+            }
+        });
+
+        if (errors.isEmpty()) {
+            Member.findOne({ nric: req.body.nric }, (err, existingMember) => {
+                if (err) { return next(err); }
+                if (existingMember) {
+                    req.flash("errors", { msg: "Member with the same NRIC already exists." });
+                    res.render("member/form", {
+                        title: "Create Member 注册会员",
+                        member: memberInput
+                    });
+                } else {
+                    memberInput.save((err, memberCreated) => {
+                        if (err) { return next(err); }
+                        req.flash("success", { msg: "New member created: " + memberCreated._id });
+                        res.redirect("/members");
+                    });
+                }
+            });
+        } else {
+            req.flash("errors", errors.array());
+            res.render("member/form", {
+                title: "Create Member 注册会员",
+                member: memberInput
+            });
+        }
+    }
+];
+
+/**
+ * GET /member/:id
+ * View Member Detail page.
+ */
+export let getMemberDetail = (req: Request, res: Response, next: NextFunction) => {
+    Member.findById(req.params.id, (err, memberDb) => {
+        if (err) { return next(err); }
+        if (memberDb) {
+            res.render("member/detail", {
+                title: "Member Detail 会员资料",
+                member: memberDb,
+                memberId: memberDb._id
+            });
+        } else {
+            req.flash("errors", { msg: "Member not found." });
+            res.redirect("/members");
+        }
+    });
+};
+
+/**
+ * GET /member/:id/update
+ * Update Member page.
+ */
+export let getMemberUpdate = (req: Request, res: Response, next: NextFunction) => {
+    Member.findById(req.params.id, (err, memberDb) => {
+        if (err) { return next(err); }
+        if (memberDb) {
+            res.render("member/form", {
+                title: "Edit Member Detail 会员资料编辑",
+                member: memberDb,
+                memberId: memberDb._id
+            });
+        } else {
+            req.flash("errors", { msg: "Member not found." });
+            res.redirect("/members");
+        }
+    });
+};
+
+/**
+ * POST /member/:id/update
+ * Update an existing Member.
+ */
+export let postMemberUpdate = [
+    // validate values
+    body("dateJoin")
+        .isLength({ min: 1 }).trim().withMessage("Date Join is required.")
+        .isISO8601().withMessage("Date Join is invalid."),
+    body("nameCh")
+        .isLength({ min: 1 }).trim().withMessage("Name CH is required."),
+    body("name")
+        .isLength({ min: 1 }).trim().withMessage("Name EN is required."),
+    body("dob")
+        .isLength({ min: 1 }).trim().withMessage("Date of Birth is required.")
+        .isISO8601().withMessage("Date of Birth is invalid."),
+    body("mobileNo")
+        .isLength({ min: 1 }).trim().withMessage("Mobile No. is required."),
+    body("nric")
+        .isLength({ min: 1 }).trim().withMessage("NRIC is required."),
+
+    // sanitize values
+    sanitizeBody("*").trim().escape(),
+    sanitizeBody("dateJoin").toDate(),
+    sanitizeBody("dob").toDate(),
+
+    // process request
+    (req: Request, res: Response, next: NextFunction) => {
+        const errors = validationResult(req);
+
+        const memberInput = new Member({
+            nric: req.body.nric,
+            dateJoin: req.body.dateJoin,
+            createdBy: req.user.id,
+            profile: {
+                name: req.body.name,
+                nameCh: req.body.nameCh,
+                gender: req.body.gender,
+                dob: req.body.dob
+            },
+            contact: {
+                mobileNo: req.body.mobileNo,
+                homeAddr: req.body.homeAddr
+            },
+            bank: {
+                accNo: req.body.bankAccNo,
+                bankName: req.body.bankName,
+                bankAddr: req.body.bankAddr
+            },
+            social: {
+                wechat: req.body.wechat
+            },
+            sponsor: {
+                name: req.body.sponsorName,
+                contactNo: req.body.sponsorContactNo,
+                orgNo: req.body.sponsorOrg,
+                teamNo: req.body.sponsorTeam
+            },
+            starterKit: {
+                kitCode: req.body.starterKitCode,
+                kitAmount: req.body.starterKitAmount
+            },
+            _id: req.params.id,
+            updatedBy: req.user.id
+        });
+
+        if (errors.isEmpty()) {
+            Member.findById(req.params.id, (err, targetMember) => {
+                if (err) { return next(err); }
+
+                if (!targetMember) {
+                    req.flash("errors", { msg: "Member not found." });
+                    res.redirect("/members");
+                }
+
+                // check if nric already used for other Member records
+                Member.findOne({ nric: req.body.nric }, (err, otherMemberWithSameNric) => {
+                    if (err) { return next(err); }
+                    if (otherMemberWithSameNric._id !== targetMember._id) {
+                        req.flash("errors", { msg: "Other Member with the same NRIC already exists." });
+                        res.render("member/form", {
+                            title: "Edit Member Detail 会员资料编辑",
+                            member: memberInput,
+                            memberId: memberInput._id
+                        });
+                    } else {
+                        Member.findByIdAndUpdate(req.params.id, memberInput, (err, memberUpdated: MemberModel) => {
+                            if (err) { return next(err); }
+                            req.flash("success", { msg: "Member successfully updated." });
+                            res.redirect(memberUpdated.url);
+                        });
+                    }
+                });
+            });
+        } else {
+            req.flash("errors", errors.array());
+            res.render("member/form", {
+                title: "Edit Member Detail 会员资料编辑",
+                member: memberInput,
+                memberId: memberInput._id
+            });
+        }
+    }
+];
