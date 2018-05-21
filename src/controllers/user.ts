@@ -6,16 +6,17 @@ import { default as User, UserModel, AuthToken } from "../models/User";
 import { Request, Response, NextFunction } from "express";
 import { IVerifyOptions } from "passport-local";
 import { WriteError } from "mongodb";
+import { EMAIL_HOST, EMAIL_PORT, EMAIL_USER, EMAIL_PASSWORD } from "../util/secrets";
 const request = require("express-validator");
 
 // TODO: refactor - move into a mail service
 const smtpConfig = {
-  host: process.env.EMAIL_HOST,
-  port: parseInt(process.env.EMAIL_PORT),
+  host: EMAIL_HOST,
+  port: parseInt(EMAIL_PORT),
   secure: false, // upgrade later with STARTTLS
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD
+    user: EMAIL_USER,
+    pass: EMAIL_PASSWORD
   }
 };
 

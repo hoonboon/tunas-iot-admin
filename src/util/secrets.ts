@@ -13,7 +13,11 @@ export const ENVIRONMENT = process.env.NODE_ENV;
 const prod = ENVIRONMENT === "production"; // Anything else is treated as 'dev'
 
 export const SESSION_SECRET = process.env["SESSION_SECRET"];
-export const MONGODB_URI = prod ? process.env["MONGODB_URI"] : process.env["MONGODB_URI_LOCAL"];
+export const MONGODB_URI = process.env["MONGODB_URI"];
+export const EMAIL_HOST = process.env["EMAIL_HOST"];
+export const EMAIL_PORT = process.env["EMAIL_PORT"];
+export const EMAIL_USER = process.env["EMAIL_USER"];
+export const EMAIL_PASSWORD = process.env["EMAIL_PASSWORD"];
 
 if (!SESSION_SECRET) {
     logger.error("No client secret. Set SESSION_SECRET environment variable.");
@@ -22,5 +26,10 @@ if (!SESSION_SECRET) {
 
 if (!MONGODB_URI) {
     logger.error("No mongo connection string. Set MONGODB_URI environment variable.");
+    process.exit(1);
+}
+
+if (!EMAIL_HOST || !EMAIL_PORT || !EMAIL_USER || !EMAIL_PASSWORD) {
+    logger.error("No SMTP configuration. Set EMAIL_HOST, EMAIL_PORT, EMAIL_USER, EMAIL_PASSWORD environment variables.");
     process.exit(1);
 }
