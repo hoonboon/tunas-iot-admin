@@ -13,14 +13,44 @@ import moment from "moment";
  * Member listing page.
  */
 export let getMembers = (req: Request, res: Response, next: NextFunction) => {
-    // const provider = req.params.provider;
-    Member.find()
-        .sort([["dateJoin", "ascending"], ["profile.name", "ascending"]])
-        .exec(function (err, item_list: any) {
+    let searchJoinDate = req.query.searchJoinDate;
+    const searchName = req.query.searchName;
+    const searchNric = req.query.searchNric;
+
+    // default filter
+    if (!searchJoinDate && !searchName && !searchNric) {
+        searchJoinDate = moment().format("YYYY-MM-DD");
+    }
+
+    const query = Member.find();
+
+    // filter records
+    if (searchJoinDate) {
+        query.where("dateJoin").equals(searchJoinDate);
+    }
+
+    if (searchName) {
+        const regex = new RegExp(searchName.toUpperCase());
+        query.where("profile.name").regex(regex);
+    }
+
+    if (searchNric) {
+        const regex = new RegExp(searchNric.toUpperCase());
+        query.where("nric").regex(regex);
+    }
+
+    query.sort([["dateJoin", "ascending"], ["profile.name", "ascending"]]);
+    query.exec(function (err, item_list: any) {
             if (err) {
                 return next(err);
             }
-            res.render("member/list", { title: "Member List 会员", member_list: item_list });
+            res.render("member/list", {
+                title: "Member List 会员",
+                member_list: item_list,
+                searchName: searchName,
+                searchJoinDate: searchJoinDate,
+                searchNric: searchNric
+            });
         });
 };
 

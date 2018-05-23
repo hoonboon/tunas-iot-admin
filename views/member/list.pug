@@ -6,6 +6,23 @@ block content
     h3= title 
     a(href='/member/create' class='btn btn-primary') Create 注册
 
+  #search.panel.panel-default
+    .panel-body
+      form.form-inline
+        .form-group
+          label(for='searchJoinDate') Join Date: 
+          input.form-control(type='date', name='searchJoinDate', id='searchJoinDate', placeholder='Search...', value=searchJoinDate)
+        .form-group
+          label(for='searchName') Name: 
+          input.form-control(type='text', name='searchName', id='searchName', placeholder='Search...', value=searchName)
+        .form-group
+          label(for='searchNric') NRIC: 
+          input.form-control(type='text', name='searchNric', id='searchNric', placeholder='Search...', value=searchNric)
+        button.btn.btn-primary(type='submit') 
+          span.glyphicon.glyphicon-search
+  
+  p 
+
   #listing.table-wrap
     table.table.table-striped
       thead
