@@ -111,7 +111,7 @@ block content
         select.form-control(name='starterProduct', id='starterProduct', placeholder='Starter Kit')
           if products
             for product in products
-              if member
+              if member && member.starterKit.product
                 option(
                   value=product._id 
                   selected=(
