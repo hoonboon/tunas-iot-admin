@@ -3,6 +3,8 @@ import moment from "moment";
 
 const uuid = require("uuid/v4");
 
+const Schema = mongoose.Schema;
+
 export type MemberModel = mongoose.Document & {
   nric: string,
   dateJoin: Date,
@@ -36,7 +38,7 @@ export type MemberModel = mongoose.Document & {
     teamNo: string
   },
   starterKit: {
-    kitCode: string,
+    product: any,
     kitAmount: string
   },
   url: string
@@ -44,13 +46,13 @@ export type MemberModel = mongoose.Document & {
 
 const memberSchema = new mongoose.Schema({
   _id: { type: String, default: uuid },
-  nric: { type: String, required: true, unique: true },
+  nric: { type: String, required: true, unique: true, uppercase: true },
   dateJoin: { type: Date, required: true },
   status: { type: String, required: true, default: "A" },
   createdBy: String,
   updatedBy: String,
   profile: {
-    name: { type: String, required: true },
+    name: { type: String, required: true, uppercase: true },
     nameCh: String,
     gender: String,
     dob: { type: Date, required: true },
@@ -70,13 +72,13 @@ const memberSchema = new mongoose.Schema({
     wechat: String
   },
   sponsor: {
-    name: String,
+    name: { type: String, uppercase: true },
     contactNo: String,
     orgNo: String,
     teamNo: String
   },
   starterKit: {
-    kitCode: String,
+    product: { type: Schema.Types.ObjectId, ref: "Product" },
     kitAmount: String
   }
 }, { timestamps: true });
@@ -85,7 +87,7 @@ const memberSchema = new mongoose.Schema({
 memberSchema
 .virtual("dateJoinDisplay")
 .get(function () {
-    return this.dateJoin ? moment(this.dateJoin).format("MMM Do, YYYY") : "?";
+    return this.dateJoin ? moment(this.dateJoin).format("YYYY-MM-DD") : "?";
 });
 
 // Virtual for Date Join for form input
@@ -99,7 +101,7 @@ memberSchema
 memberSchema
 .virtual("profile.dobDisplay")
 .get(function () {
-    return this.profile.dob ? moment(this.profile.dob).format("MMM Do, YYYY") : "?";
+    return this.profile.dob ? moment(this.profile.dob).format("YYYY-MM-DD") : "?";
 });
 
 // Virtual for Date of Birth for form input

@@ -108,36 +108,19 @@ block content
     .form-group
       label.col-sm-3.control-label(for='starterKitCode') Starter Kit 产品
       .col-sm-7
-        select.form-control(name='starterKitCode', id='starterKitCode', placeholder='Starter Kit')
-          if member
-            option(
-              value='1' label='White Necklace 白项链'
-              selected=(
-                  '1' == member.starterKit.kitCode
-                ) ? 'selected' : false
-            )
-            option(
-              value='2' label='Black Necklace 黑项链'
-              selected=(
-                  '2' == member.starterKit.kitCode
-                ) ? 'selected' : false
-            )
-            option(
-              value='3' label='Coconut Oil 椰子油'
-              selected=(
-                  '3' == member.starterKit.kitCode
-                ) ? 'selected' : false
-            )
-          else
-            option(
-              value='1' label='White Necklace 白项链'
-            )
-            option(
-              value='2' label='Black Necklace 黑项链'
-            )
-            option(
-              value='3' label='Coconut Oil 椰子油'
-            )
+        select.form-control(name='starterProduct', id='starterProduct', placeholder='Starter Kit')
+          if products
+            for product in products
+              if member
+                option(
+                  value=product._id 
+                  selected=(
+                    product._id.toString() == member.starterKit.product
+                    || product._id.toString() == member.starterKit.product._id
+                  ) ? 'selected' : false
+                ) #{product.productName}
+              else
+                option(value=product._id) #{product.productName}
     .form-group
       label.col-sm-3.control-label(for='starterKitAmount') Amount 金额
       .col-sm-7

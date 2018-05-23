@@ -90,25 +90,7 @@ block content
     .form-group
       label.col-sm-3.control-label Starter Kit 产品
       .col-sm-7
-        select.form-control(disabled=true)
-          option(
-            value='1' label='White Necklace 白项链'
-            selected=(
-                '1' == member.starterKit.kitCode
-              ) ? 'selected' : false
-          )
-          option(
-            value='2' label='Black Necklace 黑项链'
-            selected=(
-                '2' == member.starterKit.kitCode
-              ) ? 'selected' : false
-          )
-          option(
-            value='3' label='Coconut Oil 椰子油'
-            selected=(
-                '3' == member.starterKit.kitCode
-              ) ? 'selected' : false
-          )
+        .form-control #{member.starterKit.product.productCode} #{member.starterKit.product.productName}
     .form-group
       label.col-sm-3.control-label Amount 金额
       .col-sm-7
