@@ -118,9 +118,9 @@ block content
                     product._id.toString() == member.starterKit.product
                     || product._id.toString() == member.starterKit.product._id
                   ) ? 'selected' : false
-                ) #{product.productName}
+                ) #{product.productName} #{product.productNameCh}
               else
-                option(value=product._id) #{product.productName}
+                option(value=product._id) #{product.productName}  #{product.productNameCh}
     .form-group
       label.col-sm-3.control-label(for='starterKitAmount') Amount 金额
       .col-sm-7
