@@ -3,6 +3,8 @@ import moment from "moment";
 
 const uuid = require("uuid/v4");
 
+const Schema = mongoose.Schema;
+
 export type MemberModel = mongoose.Document & {
   nric: string,
   dateJoin: Date,
@@ -36,7 +38,7 @@ export type MemberModel = mongoose.Document & {
     teamNo: string
   },
   starterKit: {
-    kitCode: string,
+    product: any,
     kitAmount: string
   },
   url: string
@@ -76,7 +78,7 @@ const memberSchema = new mongoose.Schema({
     teamNo: String
   },
   starterKit: {
-    kitCode: String,
+    product: { type: Schema.Types.ObjectId, ref: "Product" },
     kitAmount: String
   }
 }, { timestamps: true });

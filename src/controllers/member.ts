@@ -1,12 +1,13 @@
 import async from "async";
+import moment from "moment";
 import { default as Member, MemberModel } from "../models/Member";
+import Product from "../models/Product";
 import { Request, Response, NextFunction } from "express";
 import { WriteError } from "mongodb";
 
 import { body, validationResult } from "express-validator/check";
 import { sanitizeBody } from "express-validator/filter";
 
-import moment from "moment";
 
 /**
  * GET /members
@@ -58,7 +59,7 @@ export let getMembers = (req: Request, res: Response, next: NextFunction) => {
  * GET /member/create
  * Create Member page.
  */
-export let getMemberCreate = (req: Request, res: Response) => {
+export let getMemberCreate = (req: Request, res: Response, next: NextFunction) => {
     // TODO: for local testing only
     // const memberInput = new Member({
     //     nric: "1001",
@@ -98,9 +99,22 @@ export let getMemberCreate = (req: Request, res: Response) => {
             dateJoin: moment(),
     });
 
-    res.render("member/form", {
-        title: "Create Member 注册会员",
-        member: memberInput
+    async.parallel({
+        // get product options
+        products: function(callback) {
+            Product.find({ status: "A" })
+                .sort("productCode")
+                .exec(callback);
+        }
+    }, function(err, results) {
+        if (err) { return next(err); }
+
+        res.render("member/form", {
+            title: "Create Member 注册会员",
+            member: memberInput,
+            products: results.products
+        });
+
     });
 };
 
@@ -163,7 +177,7 @@ export let postMemberCreate = [
                 teamNo: req.body.sponsorTeam
             },
             starterKit: {
-                kitCode: req.body.starterKitCode,
+                product: req.body.starterProduct,
                 kitAmount: req.body.starterKitAmount
             }
         });
@@ -173,9 +187,23 @@ export let postMemberCreate = [
                 if (err) { return next(err); }
                 if (existingMember) {
                     req.flash("errors", { msg: "Member with the same NRIC already exists." });
-                    res.render("member/form", {
-                        title: "Create Member 注册会员",
-                        member: memberInput
+
+                    async.parallel({
+                        // get product options
+                        products: function(callback) {
+                            Product.find({ status: "A" })
+                                .sort("productCode")
+                                .exec(callback);
+                        }
+                    }, function(err, results) {
+                        if (err) { return next(err); }
+
+                        res.render("member/form", {
+                            title: "Create Member 注册会员",
+                            member: memberInput,
+                            products: results.products
+                        });
+
                     });
                 } else {
                     memberInput.save((err, memberCreated) => {
@@ -187,9 +215,23 @@ export let postMemberCreate = [
             });
         } else {
             req.flash("errors", errors.array());
-            res.render("member/form", {
-                title: "Create Member 注册会员",
-                member: memberInput
+
+            async.parallel({
+                // get product options
+                products: function(callback) {
+                    Product.find({ status: "A" })
+                        .sort("productCode")
+                        .exec(callback);
+                }
+            }, function(err, results) {
+                if (err) { return next(err); }
+
+                res.render("member/form", {
+                    title: "Create Member 注册会员",
+                    member: memberInput,
+                    products: results.products
+                });
+
             });
         }
     }
@@ -200,7 +242,9 @@ export let postMemberCreate = [
  * View Member Detail page.
  */
 export let getMemberDetail = (req: Request, res: Response, next: NextFunction) => {
-    Member.findById(req.params.id, (err, memberDb) => {
+    Member.findById(req.params.id)
+    .populate("starterKit.product")
+    .exec((err, memberDb) => {
         if (err) { return next(err); }
         if (memberDb) {
             res.render("member/detail", {
@@ -220,18 +264,34 @@ export let getMemberDetail = (req: Request, res: Response, next: NextFunction) =
  * Update Member page.
  */
 export let getMemberUpdate = (req: Request, res: Response, next: NextFunction) => {
-    Member.findById(req.params.id, (err, memberDb) => {
+    async.parallel({
+        // get product options
+        products: function(callback) {
+            Product.find({ status: "A" })
+                .sort("productCode")
+                .exec(callback);
+        },
+        member: function(callback) {
+            Member.findById(req.params.id)
+                .exec(callback);
+        }
+    }, function(err, results) {
         if (err) { return next(err); }
-        if (memberDb) {
-            res.render("member/form", {
-                title: "Edit Member Detail 会员资料编辑",
-                member: memberDb,
-                memberId: memberDb._id
-            });
-        } else {
+
+        if (!results.member) {
             req.flash("errors", { msg: "Member not found." });
             res.redirect("/members");
         }
+
+        const memberDb = <MemberModel>results.member;
+
+        res.render("member/form", {
+            title: "Edit Member Detail 会员资料编辑",
+            member: memberDb,
+            memberId: memberDb._id,
+            products: results.products
+        });
+
     });
 };
 
@@ -294,7 +354,7 @@ export let postMemberUpdate = [
                 teamNo: req.body.sponsorTeam
             },
             starterKit: {
-                kitCode: req.body.starterKitCode,
+                product: req.body.starterProduct,
                 kitAmount: req.body.starterKitAmount
             },
             _id: req.params.id,
@@ -315,10 +375,23 @@ export let postMemberUpdate = [
                     if (err) { return next(err); }
                     if (otherMemberWithSameNric._id !== targetMember._id) {
                         req.flash("errors", { msg: "Other Member with the same NRIC already exists." });
-                        res.render("member/form", {
-                            title: "Edit Member Detail 会员资料编辑",
-                            member: memberInput,
-                            memberId: memberInput._id
+
+                        async.parallel({
+                            // get product options
+                            products: function(callback) {
+                                Product.find({ status: "A" })
+                                    .sort("productCode")
+                                    .exec(callback);
+                            }
+                        }, function(err, results) {
+                            if (err) { return next(err); }
+
+                            res.render("member/form", {
+                                title: "Edit Member Detail 会员资料编辑",
+                                member: memberInput,
+                                products: results.products
+                            });
+
                         });
                     } else {
                         Member.findByIdAndUpdate(req.params.id, memberInput, (err, memberUpdated: MemberModel) => {
@@ -331,10 +404,24 @@ export let postMemberUpdate = [
             });
         } else {
             req.flash("errors", errors.array());
-            res.render("member/form", {
-                title: "Edit Member Detail 会员资料编辑",
-                member: memberInput,
-                memberId: memberInput._id
+
+            async.parallel({
+                // get product options
+                products: function(callback) {
+                    Product.find({ status: "A" })
+                        .sort("productCode")
+                        .exec(callback);
+                }
+            }, function(err, results) {
+                if (err) { return next(err); }
+
+                res.render("member/form", {
+                    title: "Edit Member Detail 会员资料编辑",
+                    member: memberInput,
+                    memberId: memberInput._id,
+                    products: results.products
+                });
+
             });
         }
     }
