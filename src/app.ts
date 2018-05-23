@@ -101,8 +101,8 @@ app.get("/reset/:token", userController.getReset);
 app.post("/reset/:token", userController.postReset);
 
 // ** open for local development use only **
-app.get("/signup", userController.getSignup);
-app.post("/signup", userController.postSignup);
+// app.get("/signup", userController.getSignup);
+// app.post("/signup", userController.postSignup);
 
 // app.get("/contact", contactController.getContact);
 // app.post("/contact", contactController.postContact);
