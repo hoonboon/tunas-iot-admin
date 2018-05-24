@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import moment from "moment";
 
-const shortid = require("shortid");
+const shortid32 = require("shortid32");
 
 const Schema = mongoose.Schema;
 
@@ -45,7 +45,7 @@ export type MemberModel = mongoose.Document & {
 };
 
 const memberSchema = new mongoose.Schema({
-  _id: { type: String, default: shortid.generate },
+  _id: { type: String, default: shortid32.generate },
   nric: { type: String, required: true, unique: true, uppercase: true },
   dateJoin: { type: Date, required: true },
   status: { type: String, required: true, default: "A" },
