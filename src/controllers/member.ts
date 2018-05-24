@@ -31,12 +31,12 @@ export let getMembers = (req: Request, res: Response, next: NextFunction) => {
     }
 
     if (searchName) {
-        const regex = new RegExp(searchName.toUpperCase());
+        const regex = new RegExp(searchName.toUpperCase().replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&"));
         query.where("profile.name").regex(regex);
     }
 
     if (searchNric) {
-        const regex = new RegExp(searchNric.toUpperCase());
+        const regex = new RegExp(searchNric.toUpperCase().replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&"));
         query.where("nric").regex(regex);
     }
 
