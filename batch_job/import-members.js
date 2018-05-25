@@ -81,8 +81,8 @@ const csv = require("csvtojson");
 csv().fromFile("batch_job/members.csv").then((jsonObj) => {
     // console.log(jsonObj);
 
-    for (i in jsonObj) {
-        console.log((i+1) + ": " + jsonObj[i]);
+    for (let i in jsonObj) {
+        // console.log(jsonObj[i]);
         
         let newMember = new Member(jsonObj[i]);
         
@@ -102,7 +102,7 @@ csv().fromFile("batch_job/members.csv").then((jsonObj) => {
                     console.log(err);
                     process.exit(1);
                 } else {
-                    console.log('new record id: ' + dbObj._id);
+                    console.log('new record id[' + i + ']: ' + dbObj._id);
                 }
             });
         });
