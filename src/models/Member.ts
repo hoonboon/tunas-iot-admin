@@ -9,8 +9,8 @@ export type MemberModel = mongoose.Document & {
   nric: string,
   dateJoin: Date,
   status: string,
-  createdBy: string,
-  updatedBy: string,
+  createdBy: any,
+  updatedBy: any,
   profile: {
     name: string,
     nameCh: string,
@@ -49,8 +49,8 @@ const memberSchema = new mongoose.Schema({
   nric: { type: String, required: true, unique: true, uppercase: true },
   dateJoin: { type: Date, required: true },
   status: { type: String, required: true, default: "A" },
-  createdBy: String,
-  updatedBy: String,
+  createdBy: { type: Schema.Types.ObjectId, ref: "User" },
+  updatedBy: { type: Schema.Types.ObjectId, ref: "User" },
   profile: {
     name: { type: String, required: true, uppercase: true },
     nameCh: String,
