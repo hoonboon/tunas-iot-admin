@@ -31,16 +31,16 @@ block content
     table.table.table-striped
       thead
         tr
-          th Name 英文姓名
-          th Name CH 中文姓名
+          th Name 姓名
+          th NRIC 身份证号
           th Date Join 报单日期
           th Mobile No. 手机号码
       tbody
         each member in member_list
           tr
             td 
-              a(href=member.url) #{member.profile.name}
-            td #{member.profile.nameCh}
+              a(href=member.url) #{member.profile.nameDisplay}
+            td #{member.nric}
             td #{member.dateJoinDisplay}
             td #{member.contact.mobileNo}
         else

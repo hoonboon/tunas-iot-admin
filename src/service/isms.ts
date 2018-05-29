@@ -1,5 +1,6 @@
 import * as request from "request-promise";
 import { ISMS_BASE_URI, ISMS_UN, ISMS_PWD, ISMS_TEST_NO } from "../util/secrets";
+import { MemberModel } from "../models/Member";
 
 const baseUri = ISMS_BASE_URI;
 const username = ISMS_UN;
@@ -44,9 +45,9 @@ function sendMsg (targetNo: string, msg: string): request.RequestPromise {
     return request.get(options);
 }
 
-export function notifyMemberId (targetNo: string, memberId: string): request.RequestPromise {
-    const msg = "Tunas IOT: Your Member ID is " + memberId;
-    return sendMsg(targetNo, msg);
+export function notifyMemberId (targetNo: string, member: MemberModel): request.RequestPromise {
+    return sendMsg(targetNo, member.notifyIdMsg);
+    // return getBalance(); // for local testing only
 }
 
 export function isSuccess(response: string): boolean {

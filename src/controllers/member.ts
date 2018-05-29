@@ -518,7 +518,7 @@ export let postMemberNotifyId = [
                 if (targetMember.contact.mobileNo) {
                     if (targetMember.isValidMobileNoMy) {
                         // if valid Malaysia mobile no then call service api to send notification
-                        isms.notifyMemberId(targetMember.contact.mobileNo, targetMember._id)
+                        isms.notifyMemberId(targetMember.contact.mobileNo, targetMember)
                             .then(response => {
                                 if (isms.isSuccess(response)) {
                                     // update member.lastNotifyId

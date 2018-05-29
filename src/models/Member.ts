@@ -15,7 +15,8 @@ export type MemberModel = mongoose.Document & {
     name: string,
     nameCh: string,
     gender: string,
-    dob: Date
+    dob: Date,
+    nameDisplay: string
   },
   contact: {
     mobileNo: string,
@@ -44,7 +45,8 @@ export type MemberModel = mongoose.Document & {
   lastNotifyId: Date,
   url: string,
   isValidMobileNoMy: boolean,
-  lastNotifyIdDisplay: string
+  lastNotifyIdDisplay: string,
+  notifyIdMsg: string
 };
 
 const memberSchema = new mongoose.Schema({
@@ -138,6 +140,25 @@ memberSchema
         return regexp.test(this.contact.mobileNo);
     }
     return false;
+});
+
+// Virtual for Member Name for display
+memberSchema
+.virtual("profile.nameDisplay")
+.get(function () {
+    let nameDisplay = this.profile.name;
+    if (this.profile.nameCh) {
+      nameDisplay += " (" + this.profile.nameCh + ")";
+    }
+    return nameDisplay;
+});
+
+// Virtual for Member Id Notification message
+memberSchema
+.virtual("notifyIdMsg")
+.get(function () {
+    const msg = "Tunas IOT: " + this.profile.nameDisplay + " Your Member ID is " + this._id;
+    return msg;
 });
 
 const Member = mongoose.model("Member", memberSchema);

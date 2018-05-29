@@ -39,10 +39,10 @@ block content
           tr
             td 
               // a(href='#', onclick='showMemberInfo(\'' + member._id + '\')') #{member.profile.name} (#{member.profile.nameCh})
-              | #{member.profile.name} (#{member.profile.nameCh})
+              | #{member.profile.nameDisplay}
             td #{member.contact.mobileNo}
             if (member.isValidMobileNoMy)
-              td(id='lastNotify_' + member._id) #{member.lastNotifyIdDisplay}
+              td(id='lastNotify_' + member._id, align='center') #{member.lastNotifyIdDisplay}
               td 
                 if (member.lastNotifyId)
                   button.btn.btn-danger(type='button', id='btnSend_' + member._id, onclick='onResend(\'' + member._id + '\')') Resend
@@ -51,7 +51,7 @@ block content
             else
               td(colspan='2').
                 Please send manually: 
-                <br>Tunas IOT: Your Member ID is #{member._id}
+                <br>#{member.notifyIdMsg}
         else
           tr
             td(colspan='4' align='center') No members found.

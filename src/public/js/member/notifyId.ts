@@ -4,6 +4,10 @@ $(document).ready(function() {
 
 function onSend(rowId: string) {
     $("#btnSend_" + rowId).attr("disabled", "disabled");
+
+    const prevValue = $("#lastNotify_" + rowId).html();
+    $("#lastNotify_" + rowId).html('<i class="fa fa-gear fa-spin" style="font-size:24px"></i>');
+
     $.post("/member/" + rowId + "/notifyId", {}, function(data, status) {
         if (status == "success") {
             $("#lastNotify_" + rowId).html(data.lastNotifyId);
@@ -16,10 +20,12 @@ function onSend(rowId: string) {
             }
         } else {
             alert("Error: " + data.errorMsg);
+            $("#lastNotify_" + rowId).html(prevValue);
         }
     })
     .fail(function(xhr, status, error) {
         alert("Error: " + xhr.responseJSON.errorMsg);
+        $("#lastNotify_" + rowId).html(prevValue);
     })
     .always(function() {
         $("#btnSend_" + rowId).removeAttr("disabled");
