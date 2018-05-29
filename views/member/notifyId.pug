@@ -7,7 +7,7 @@ block content
       if title2
         = title2
       else
-       = title
+        = title
 
   #search.panel.panel-default
     .panel-body
@@ -38,11 +38,11 @@ block content
         each member in member_list
           tr
             td 
-              // a(href='#', onclick='showMemberInfo(\'' + member._id + '\')') #{member.profile.name} (#{member.profile.nameCh})
+              //- a(href='#', onclick='showMemberInfo(\'' + member._id + '\')') #{member.profile.name} (#{member.profile.nameCh})
               | #{member.profile.nameDisplay}
             td #{member.contact.mobileNo}
             if (member.isValidMobileNoMy)
-              td(id='lastNotify_' + member._id, align='center') #{member.lastNotifyIdDisplay}
+              td(id='lastNotify_' + member._id) #{member.lastNotifyIdDisplay}
               td 
                 if (member.lastNotifyId)
                   button.btn.btn-danger(type='button', id='btnSend_' + member._id, onclick='onResend(\'' + member._id + '\')') Resend
@@ -54,4 +54,17 @@ block content
                 <br>#{member.notifyIdMsg}
         else
           tr
-            td(colspan='4' align='center') No members found.
+            td(colspan='4' align='center') No records found.
+
+  //- #member-info.modal.fade(tabindex='-1')
+  //-   .modal-dialog
+  //-     .modal-content
+  //-       .modal-header
+  //-         button.close(type='button', data-dismiss='modal')
+  //-           span &times;
+  //-         h4 Modal Title
+  //-       .modal-body
+  //-         p One fine body... 
+  //-       .modal-footer
+  //-         button.btn.btn-default(type='button', data-dismiss='modal') Close
+  //-         button.btn.btn-primary(type='button') Save Changes

@@ -48,8 +48,8 @@ export let getMembers = (req: Request, res: Response, next: NextFunction) => {
                 return next(err);
             }
             res.render("member/list", {
-                title: "Member",
-                title2: "Member List 会员",
+                title: "Agent",
+                title2: "Agent List 代理",
                 member_list: item_list,
                 searchName: searchName,
                 searchJoinDate: searchJoinDate,
@@ -113,8 +113,8 @@ export let getMemberCreate = (req: Request, res: Response, next: NextFunction) =
         if (err) { return next(err); }
 
         res.render("member/form", {
-            title: "Member",
-            title2: "Create Member 注册会员",
+            title: "Agent",
+            title2: "Create Agent 注册代理",
             member: memberInput,
             products: results.products
         });
@@ -190,7 +190,7 @@ export let postMemberCreate = [
             Member.findOne({ nric: req.body.nric }, (err, existingMember) => {
                 if (err) { return next(err); }
                 if (existingMember) {
-                    req.flash("errors", { msg: "Member with the same NRIC already exists." });
+                    req.flash("errors", { msg: "Agent with the same NRIC already exists." });
 
                     async.parallel({
                         // get product options
@@ -203,8 +203,8 @@ export let postMemberCreate = [
                         if (err) { return next(err); }
 
                         res.render("member/form", {
-                            title: "Member",
-                            title2: "Create Member 注册会员",
+                            title: "Agent",
+                            title2: "Create Agent 注册代理",
                             member: memberInput,
                             products: results.products
                         });
@@ -232,8 +232,8 @@ export let postMemberCreate = [
                 if (err) { return next(err); }
 
                 res.render("member/form", {
-                    title: "Member",
-                    title2: "Create Member 注册会员",
+                    title: "Agent",
+                    title2: "Create Agent 注册代理",
                     member: memberInput,
                     products: results.products
                 });
@@ -254,13 +254,13 @@ export let getMemberDetail = (req: Request, res: Response, next: NextFunction) =
         if (err) { return next(err); }
         if (memberDb) {
             res.render("member/detail", {
-                title: "Member",
-                title2: "Member Detail 会员资料",
+                title: "Agent",
+                title2: "Agent Detail 代理资料",
                 member: memberDb,
                 memberId: memberDb._id
             });
         } else {
-            req.flash("errors", { msg: "Member not found." });
+            req.flash("errors", { msg: "Agent not found." });
             res.redirect("/members");
         }
     });
@@ -286,15 +286,15 @@ export let getMemberUpdate = (req: Request, res: Response, next: NextFunction) =
         if (err) { return next(err); }
 
         if (!results.member) {
-            req.flash("errors", { msg: "Member not found." });
+            req.flash("errors", { msg: "Agent not found." });
             res.redirect("/members");
         }
 
         const memberDb = <MemberModel>results.member;
 
         res.render("member/form", {
-            title: "Member",
-            title2: "Edit Member Detail 会员资料编辑",
+            title: "Agent",
+            title2: "Edit Agent Detail 代理资料编辑",
             member: memberDb,
             memberId: memberDb._id,
             products: results.products
@@ -374,7 +374,7 @@ export let postMemberUpdate = [
                 if (err) { return next(err); }
 
                 if (!targetMember) {
-                    req.flash("errors", { msg: "Member not found." });
+                    req.flash("errors", { msg: "Agent not found." });
                     res.redirect("/members");
                 }
 
@@ -382,7 +382,7 @@ export let postMemberUpdate = [
                 Member.findOne({ nric: req.body.nric }, (err, otherMemberWithSameNric) => {
                     if (err) { return next(err); }
                     if (otherMemberWithSameNric._id !== targetMember._id) {
-                        req.flash("errors", { msg: "Other Member with the same NRIC already exists." });
+                        req.flash("errors", { msg: "Other Agent with the same NRIC already exists." });
 
                         async.parallel({
                             // get product options
@@ -395,8 +395,8 @@ export let postMemberUpdate = [
                             if (err) { return next(err); }
 
                             res.render("member/form", {
-                                title: "Member",
-                                title2: "Edit Member Detail 会员资料编辑",
+                                title: "Agent",
+                                title2: "Edit Agent Detail 代理资料编辑",
                                 member: memberInput,
                                 products: results.products
                             });
@@ -405,7 +405,7 @@ export let postMemberUpdate = [
                     } else {
                         Member.findByIdAndUpdate(req.params.id, memberInput, (err, memberUpdated: MemberModel) => {
                             if (err) { return next(err); }
-                            req.flash("success", { msg: "Member successfully updated." });
+                            req.flash("success", { msg: "Agent successfully updated." });
                             res.redirect(memberUpdated.url);
                         });
                     }
@@ -425,8 +425,8 @@ export let postMemberUpdate = [
                 if (err) { return next(err); }
 
                 res.render("member/form", {
-                    title: "Member",
-                    title2: "Edit Member Detail 会员资料编辑",
+                    title: "Agent",
+                    title2: "Edit Agent Detail 代理资料编辑",
                     member: memberInput,
                     memberId: memberInput._id,
                     products: results.products
@@ -478,8 +478,8 @@ export let getMembersNotifyId = (req: Request, res: Response, next: NextFunction
                 return next(err);
             }
             res.render("member/notifyId", {
-                title: "Member",
-                title2: "Notify Member ID 会员编号通知",
+                title: "Agent",
+                title2: "Notify Agent ID 代理编号通知",
                 member_list: item_list,
                 searchName: searchName,
                 searchJoinDate: searchJoinDate,
@@ -496,7 +496,7 @@ export let getMembersNotifyId = (req: Request, res: Response, next: NextFunction
 export let postMemberNotifyId = [
     // validate values
     // body("memberId")
-    //     .isLength({ min: 1 }).trim().withMessage("Member ID is required."),
+    //     .isLength({ min: 1 }).trim().withMessage("Agent ID is required."),
 
     // sanitize values
     sanitizeBody("*").trim().escape(),
@@ -511,7 +511,7 @@ export let postMemberNotifyId = [
 
                 if (!targetMember) {
                     res.status(400);
-                    res.json({ errorMsg: "Member not found." });
+                    res.json({ errorMsg: "Agent not found." });
                 }
 
                 // validate mobile no
@@ -545,7 +545,7 @@ export let postMemberNotifyId = [
                         res.status(400);
                         const returnMsg = "Please send the notification manually:"
                             + "\nTo: " + targetMember.contact.mobileNo
-                            + "\nMessage: [Tunas IOT: Your Member ID is " + targetMember._id + "]";
+                            + "\nMessage: [Tunas IOT: Your Agent ID is " + targetMember._id + "]";
                         res.json({ errorMsg: returnMsg });
                     }
                 } else {

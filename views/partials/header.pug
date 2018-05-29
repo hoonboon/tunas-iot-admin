@@ -14,16 +14,16 @@
         li(class=(title == 'Home') ? 'active' : undefined)
           a(href='/') Home
         if user
-          li.dropdown(class=(title == 'Member') ? 'active' : undefined)
+          li.dropdown(class=(title == 'Agent') ? 'active' : undefined)
             a.dropdown-toggle(href='#', data-toggle='dropdown')
-              span Member
+              span Agent
               i.caret
             ul.dropdown-menu
               li
-                a(href='/members') Member List
+                a(href='/members') Agent List
               li.divider
               li
-                a(href='/members/notifyId') Notify Member ID
+                a(href='/members/notifyId') Notify Agent ID
       ul.nav.navbar-nav.navbar-right
         if !user
           li(class=(title == 'Login') ? 'active' : undefined)

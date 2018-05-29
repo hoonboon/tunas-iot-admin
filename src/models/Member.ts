@@ -157,7 +157,7 @@ memberSchema
 memberSchema
 .virtual("notifyIdMsg")
 .get(function () {
-    const msg = "Tunas IOT: " + this.profile.nameDisplay + " Your Member ID is " + this._id;
+    const msg = "Tunas IOT: " + this.profile.nameDisplay + " Your Agent ID is " + this._id;
     return msg;
 });
 
