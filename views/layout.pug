@@ -24,6 +24,11 @@ html(lang='')
     script(src='/js/lib/bootstrap.min.js')
     script(async defer src="https://buttons.github.io/buttons.js")
     script(src='/js/main.js')
+    
+    // module or page specific that requires client side script 
+    // need to be assigned to the variable "includeScript" in the Controller
+    if includeScript
+      script(src=includeScript)
 
     //- Google Analytics: change UA-38177297-2 to be your site's ID
     //- script.

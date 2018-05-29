@@ -1,13 +1,14 @@
 import async from "async";
 import moment from "moment";
-import { default as Member, MemberModel } from "../models/Member";
-import Product from "../models/Product";
 import { Request, Response, NextFunction } from "express";
 import { WriteError } from "mongodb";
 
 import { body, validationResult } from "express-validator/check";
 import { sanitizeBody } from "express-validator/filter";
 
+import { default as Member, MemberModel } from "../models/Member";
+import { default as Product } from "../models/Product";
+import * as isms from "../service/isms";
 
 /**
  * GET /members
@@ -41,12 +42,14 @@ export let getMembers = (req: Request, res: Response, next: NextFunction) => {
     }
 
     query.sort([["dateJoin", "ascending"], ["profile.name", "ascending"]]);
+
     query.exec(function (err, item_list: any) {
             if (err) {
                 return next(err);
             }
             res.render("member/list", {
-                title: "Member List 会员",
+                title: "Member",
+                title2: "Member List 会员",
                 member_list: item_list,
                 searchName: searchName,
                 searchJoinDate: searchJoinDate,
@@ -110,7 +113,8 @@ export let getMemberCreate = (req: Request, res: Response, next: NextFunction) =
         if (err) { return next(err); }
 
         res.render("member/form", {
-            title: "Create Member 注册会员",
+            title: "Member",
+            title2: "Create Member 注册会员",
             member: memberInput,
             products: results.products
         });
@@ -199,7 +203,8 @@ export let postMemberCreate = [
                         if (err) { return next(err); }
 
                         res.render("member/form", {
-                            title: "Create Member 注册会员",
+                            title: "Member",
+                            title2: "Create Member 注册会员",
                             member: memberInput,
                             products: results.products
                         });
@@ -227,7 +232,8 @@ export let postMemberCreate = [
                 if (err) { return next(err); }
 
                 res.render("member/form", {
-                    title: "Create Member 注册会员",
+                    title: "Member",
+                    title2: "Create Member 注册会员",
                     member: memberInput,
                     products: results.products
                 });
@@ -248,7 +254,8 @@ export let getMemberDetail = (req: Request, res: Response, next: NextFunction) =
         if (err) { return next(err); }
         if (memberDb) {
             res.render("member/detail", {
-                title: "Member Detail 会员资料",
+                title: "Member",
+                title2: "Member Detail 会员资料",
                 member: memberDb,
                 memberId: memberDb._id
             });
@@ -286,7 +293,8 @@ export let getMemberUpdate = (req: Request, res: Response, next: NextFunction) =
         const memberDb = <MemberModel>results.member;
 
         res.render("member/form", {
-            title: "Edit Member Detail 会员资料编辑",
+            title: "Member",
+            title2: "Edit Member Detail 会员资料编辑",
             member: memberDb,
             memberId: memberDb._id,
             products: results.products
@@ -387,7 +395,8 @@ export let postMemberUpdate = [
                             if (err) { return next(err); }
 
                             res.render("member/form", {
-                                title: "Edit Member Detail 会员资料编辑",
+                                title: "Member",
+                                title2: "Edit Member Detail 会员资料编辑",
                                 member: memberInput,
                                 products: results.products
                             });
@@ -416,13 +425,137 @@ export let postMemberUpdate = [
                 if (err) { return next(err); }
 
                 res.render("member/form", {
-                    title: "Edit Member Detail 会员资料编辑",
+                    title: "Member",
+                    title2: "Edit Member Detail 会员资料编辑",
                     member: memberInput,
                     memberId: memberInput._id,
                     products: results.products
                 });
 
             });
+        }
+    }
+];
+
+/**
+ * GET /members/notifyId
+ * Member listing page - Notify Member ID.
+ */
+export let getMembersNotifyId = (req: Request, res: Response, next: NextFunction) => {
+    let searchJoinDate = req.query.searchJoinDate;
+    const searchName = req.query.searchName;
+    const searchNric = req.query.searchNric;
+
+    // default filter
+    if (!searchJoinDate && !searchName && !searchNric) {
+        searchJoinDate = moment().format("YYYY-MM-DD");
+    }
+
+    const query = Member.find();
+
+    // filter records
+    if (searchJoinDate) {
+        query.where("dateJoin").equals(searchJoinDate);
+    }
+
+    if (searchName) {
+        const regex = new RegExp(searchName.toUpperCase().replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&"));
+        query.where("profile.name").regex(regex);
+    }
+
+    if (searchNric) {
+        const regex = new RegExp(searchNric.toUpperCase().replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&"));
+        query.where("nric").regex(regex);
+    }
+
+    query.sort([["dateJoin", "ascending"], ["profile.name", "ascending"]]);
+
+    // client side script
+    const includeScript = "/js/member/notifyId.js";
+
+    query.exec(function (err, item_list: any) {
+            if (err) {
+                return next(err);
+            }
+            res.render("member/notifyId", {
+                title: "Member",
+                title2: "Notify Member ID 会员编号通知",
+                member_list: item_list,
+                searchName: searchName,
+                searchJoinDate: searchJoinDate,
+                searchNric: searchNric,
+                includeScript: includeScript
+            });
+        });
+};
+
+/**
+ * AJAX POST /member/:id/notifyId
+ * Send Member Id notification
+ */
+export let postMemberNotifyId = [
+    // validate values
+    // body("memberId")
+    //     .isLength({ min: 1 }).trim().withMessage("Member ID is required."),
+
+    // sanitize values
+    sanitizeBody("*").trim().escape(),
+
+    // process request
+    (req: Request, res: Response, next: NextFunction) => {
+        const errors = validationResult(req);
+
+        if (errors.isEmpty()) {
+            Member.findById(req.params.id, (err, targetMember: MemberModel) => {
+                if (err) { return next(err); }
+
+                if (!targetMember) {
+                    res.status(400);
+                    res.json({ errorMsg: "Member not found." });
+                }
+
+                // validate mobile no
+                if (targetMember.contact.mobileNo) {
+                    if (targetMember.isValidMobileNoMy) {
+                        // if valid Malaysia mobile no then call service api to send notification
+                        isms.notifyMemberId(targetMember.contact.mobileNo, targetMember._id)
+                            .then(response => {
+                                if (isms.isSuccess(response)) {
+                                    // update member.lastNotifyId
+                                    targetMember.lastNotifyId = moment().toDate();
+                                    Member.findByIdAndUpdate(targetMember._id, { lastNotifyId: targetMember.lastNotifyId }, (err, raw) => {
+                                        if (err) {
+                                            res.status(400);
+                                            res.json({ errorMsg: JSON.stringify(err) });
+                                        }
+                                        res.json({ lastNotifyId: targetMember.lastNotifyIdDisplay });
+                                    });
+                                } else {
+                                    res.status(400);
+                                    res.json({ errorMsg: JSON.stringify(response) });
+                                }
+                            })
+                            .catch(err => {
+                                res.status(400);
+                                console.log(JSON.stringify(err));
+                                res.json({ errorMsg: "Unexpected error. Please retry later." });
+                            });
+                    } else {
+                        // else compose and return notification message to allow user to send manually
+                        res.status(400);
+                        const returnMsg = "Please send the notification manually:"
+                            + "\nTo: " + targetMember.contact.mobileNo
+                            + "\nMessage: [Tunas IOT: Your Member ID is " + targetMember._id + "]";
+                        res.json({ errorMsg: returnMsg });
+                    }
+                } else {
+                    res.status(400);
+                    res.json({ errorMsg: "Mobile No. is required." });
+                }
+            });
+        } else {
+            res.status(400);
+            res.json({ errorMsg: JSON.stringify(errors) });
         }
     }
 ];

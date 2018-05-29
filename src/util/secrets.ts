@@ -14,10 +14,6 @@ const prod = ENVIRONMENT === "production"; // Anything else is treated as 'dev'
 
 export const SESSION_SECRET = process.env["SESSION_SECRET"];
 export const MONGODB_URI = process.env["MONGODB_URI"];
-export const EMAIL_HOST = process.env["EMAIL_HOST"];
-export const EMAIL_PORT = process.env["EMAIL_PORT"];
-export const EMAIL_USER = process.env["EMAIL_USER"];
-export const EMAIL_PASSWORD = process.env["EMAIL_PASSWORD"];
 
 if (!SESSION_SECRET) {
     logger.error("No client secret. Set SESSION_SECRET environment variable.");
@@ -29,7 +25,22 @@ if (!MONGODB_URI) {
     process.exit(1);
 }
 
+export const EMAIL_HOST = process.env["EMAIL_HOST"];
+export const EMAIL_PORT = process.env["EMAIL_PORT"];
+export const EMAIL_USER = process.env["EMAIL_USER"];
+export const EMAIL_PASSWORD = process.env["EMAIL_PASSWORD"];
+
 if (!EMAIL_HOST || !EMAIL_PORT || !EMAIL_USER || !EMAIL_PASSWORD) {
     logger.error("No SMTP configuration. Set EMAIL_HOST, EMAIL_PORT, EMAIL_USER, EMAIL_PASSWORD environment variables.");
+    process.exit(1);
+}
+
+export const ISMS_BASE_URI = process.env["ISMS_BASE_URI"];
+export const ISMS_UN = process.env["ISMS_UN"];
+export const ISMS_PWD = process.env["ISMS_PWD"];
+export const ISMS_TEST_NO = process.env["ISMS_TEST_NO"];
+
+if (!ISMS_BASE_URI || !ISMS_UN || !ISMS_PWD) {
+    logger.error("No iSMS configuration. Set ISMS_BASE_URI, ISMS_UN, ISMS_PWD environment variables.");
     process.exit(1);
 }

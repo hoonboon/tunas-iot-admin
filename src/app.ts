@@ -120,6 +120,8 @@ app.post("/member/create", passportConfig.isAuthenticated, memberController.post
 app.get("/member/:id", passportConfig.isAuthenticated, memberController.getMemberDetail);
 app.get("/member/:id/update", passportConfig.isAuthenticated, memberController.getMemberUpdate);
 app.post("/member/:id/update", passportConfig.isAuthenticated, memberController.postMemberUpdate);
+app.get("/members/notifyId", passportConfig.isAuthenticated, memberController.getMembersNotifyId);
+app.post("/member/:id/notifyId", passportConfig.isAuthenticated, memberController.postMemberNotifyId);
 
 /**
  * API examples routes.

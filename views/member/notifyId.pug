@@ -8,7 +8,6 @@ block content
         = title2
       else
        = title
-    a(href='/member/create' class='btn btn-primary') Create 注册
 
   #search.panel.panel-default
     .panel-body
@@ -25,24 +24,34 @@ block content
         button.btn.btn-primary(type='submit') 
           span.glyphicon.glyphicon-search
   
-  p 
+  p
 
   #listing.table-wrap
     table.table.table-striped
       thead
         tr
-          th Name 英文姓名
-          th Name CH 中文姓名
-          th Date Join 报单日期
+          th Name 姓名
           th Mobile No. 手机号码
+          th Last Sent 最近发送
+          th 
       tbody
         each member in member_list
           tr
             td 
-              a(href=member.url) #{member.profile.name}
-            td #{member.profile.nameCh}
-            td #{member.dateJoinDisplay}
+              // a(href='#', onclick='showMemberInfo(\'' + member._id + '\')') #{member.profile.name} (#{member.profile.nameCh})
+              | #{member.profile.name} (#{member.profile.nameCh})
             td #{member.contact.mobileNo}
+            if (member.isValidMobileNoMy)
+              td(id='lastNotify_' + member._id) #{member.lastNotifyIdDisplay}
+              td 
+                if (member.lastNotifyId)
+                  button.btn.btn-danger(type='button', id='btnSend_' + member._id, onclick='onResend(\'' + member._id + '\')') Resend
+                else
+                  button.btn.btn-success(type='button', id='btnSend_' + member._id, onclick='onSend(\'' + member._id + '\')') Send
+            else
+              td(colspan='2').
+                Please send manually: 
+                <br>Tunas IOT: Your Member ID is #{member._id}
         else
           tr
             td(colspan='4' align='center') No members found.

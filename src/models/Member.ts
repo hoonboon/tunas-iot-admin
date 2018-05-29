@@ -41,7 +41,10 @@ export type MemberModel = mongoose.Document & {
     product: any,
     kitAmount: string
   },
-  url: string
+  lastNotifyId: Date,
+  url: string,
+  isValidMobileNoMy: boolean,
+  lastNotifyIdDisplay: string
 };
 
 const memberSchema = new mongoose.Schema({
@@ -80,7 +83,8 @@ const memberSchema = new mongoose.Schema({
   starterKit: {
     product: { type: Schema.Types.ObjectId, ref: "Product" },
     kitAmount: String
-  }
+  },
+  lastNotifyId: Date
 }, { timestamps: true });
 
 // Virtual for Date Join for display
@@ -116,6 +120,24 @@ memberSchema
 .virtual("url")
 .get(function() {
     return "/member/" + this._id;
+});
+
+// Virtual for Date Join for display
+memberSchema
+.virtual("lastNotifyIdDisplay")
+.get(function () {
+    return this.lastNotifyId ? moment(this.lastNotifyId).format("YYYY-MM-DD HH:mm:ss") : "";
+});
+
+// Virtual for Member's Mobile No - Is valid MY modbile no.
+memberSchema
+.virtual("isValidMobileNoMy")
+.get(function() {
+    if (this.contact.mobileNo) {
+        const regexp = new RegExp(/^(601)[0|1|2|3|4|6|7|8|9]\-*[0-9]{7,8}$/);
+        return regexp.test(this.contact.mobileNo);
+    }
+    return false;
 });
 
 const Member = mongoose.model("Member", memberSchema);
