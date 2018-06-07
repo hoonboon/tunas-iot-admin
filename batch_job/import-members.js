@@ -5,6 +5,8 @@ mongoose.Promise = global.Promise;
 const shortid32 = require("shortid32");
 const Schema = mongoose.Schema;
 
+const moment = require("moment");
+
 const userSchema = new Schema({
     email: { type: String, unique: true },
     password: String,
@@ -86,25 +88,32 @@ csv().fromFile("batch_job/members.csv").then((jsonObj) => {
         
         let newMember = new Member(jsonObj[i]);
         
-        Product.findOne({ productNameCh: jsonObj[i].starterKit.productNameCh }, function(err, productObj) {
-            if (err) { 
-                console.log(err); 
-                process.exit(1);
+        Member.findOne({ nric: newMember.nric }, (err, existingMember) => {
+            if (err) { return next(err); }
+            if (existingMember) {
+                console.error("createdAt: " + moment(existingMember.createdAt).format() + ", NRIC exists: " + newMember.nric);
+            } else {
+                Product.findOne({ productNameCh: jsonObj[i].starterKit.productNameCh }, function(err, productObj) {
+                    if (err) { 
+                        console.log(err); 
+                        process.exit(1);
+                    }
+                    if (!productObj) {
+                        console.log("productObj not found for: " + jsonObj[i].starterKit.productNameCh);
+                        process.exit(1);
+                    }
+                    newMember.starterKit.product = productObj._id;
+                    newMember.createdBy = "5afda02dfb0cb715c8596459";
+                    newMember.save(function(err, dbObj) {
+                        if (err) {
+                            console.log(err);
+                            process.exit(1);
+                        } else {
+                            console.log('new record id[' + i + ']: ' + dbObj._id);
+                        }
+                    });
+                });
             }
-            if (!productObj) {
-                console.log("productObj not found for: " + jsonObj[i].starterKit.productNameCh);
-                process.exit(1);
-            }
-            newMember.starterKit.product = productObj._id;
-            newMember.createdBy = "5afda02dfb0cb715c8596459";
-            newMember.save(function(err, dbObj) {
-                if (err) {
-                    console.log(err);
-                    process.exit(1);
-                } else {
-                    console.log('new record id[' + i + ']: ' + dbObj._id);
-                }
-            });
         });
     }
 });
