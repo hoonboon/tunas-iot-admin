@@ -336,7 +336,6 @@ export let postMemberUpdate = [
         const memberInput = new Member({
             nric: req.body.nric,
             dateJoin: req.body.dateJoin,
-            createdBy: req.user.id,
             profile: {
                 name: req.body.name,
                 nameCh: req.body.nameCh,
