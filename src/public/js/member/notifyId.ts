@@ -38,6 +38,6 @@ function onResend(rowId: string) {
     }
 }
 
-function showMemberInfo(memberId: string) {
-    alert("TODO: ");
-}
+// function showMemberInfo(memberId: string) {
+//     $("#member-info").modal("show");
+// }

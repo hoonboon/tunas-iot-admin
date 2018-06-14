@@ -8,7 +8,8 @@ block content
         = title2
       else
         = title
-    a(href='/member/create' class='btn btn-primary') Create 注册
+    if user.hasAccess('member:create')
+      a(href='/member/create' class='btn btn-primary') Create 注册
 
   #search.panel.panel-default
     .panel-body
@@ -39,7 +40,10 @@ block content
         each member in member_list
           tr
             td 
-              a(href=member.url) #{member.profile.nameDisplay}
+              if user.hasAccess('member:view')
+                a(href=member.url) #{member.profile.nameDisplay}
+              else
+                | #{member.profile.nameDisplay}
             td #{member.nric}
             td #{member.dateJoinDisplay}
             td #{member.contact.mobileNo}

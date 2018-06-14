@@ -79,7 +79,8 @@ export let logout = (req: Request, res: Response) => {
  */
 export let getSignup = (req: Request, res: Response) => {
   if (req.user) {
-    return res.redirect("/");
+    req.logout();
+    return res.redirect("/signup");
   }
   res.render("account/signup", {
     title: "Create Account"

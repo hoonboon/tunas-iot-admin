@@ -2,6 +2,8 @@ import bcrypt from "bcrypt-nodejs";
 import crypto from "crypto";
 import mongoose from "mongoose";
 
+import { default as rbac } from "../config/accessControl";
+
 export type UserModel = mongoose.Document & {
   email: string,
   password: string,
@@ -19,11 +21,15 @@ export type UserModel = mongoose.Document & {
     picture: string
   },
 
+  roles: string[],
+
   comparePassword: comparePasswordFunction,
-  gravatar: (size: number) => string
+  gravatar: (size: number) => string,
+  hasAccess: hasAccessFunction
 };
 
 type comparePasswordFunction = (candidatePassword: string, cb: (err: any, isMatch: any) => {}) => void;
+type hasAccessFunction = (accessName: string, params?: any) => boolean;
 
 export type AuthToken = {
   accessToken: string,
@@ -47,7 +53,9 @@ const userSchema = new mongoose.Schema({
     location: String,
     website: String,
     picture: String
-  }
+  },
+
+  roles: [String]
 }, { timestamps: true });
 
 /**
@@ -73,6 +81,12 @@ const comparePassword: comparePasswordFunction = function (candidatePassword, cb
 };
 
 userSchema.methods.comparePassword = comparePassword;
+
+const hasAccess: hasAccessFunction = function (accessName, params) {
+  return rbac.can(this.roles, accessName, params);
+};
+
+userSchema.methods.hasAccess = hasAccess;
 
 /**
  * Helper method for getting user's gravatar.

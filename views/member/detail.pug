@@ -113,7 +113,8 @@ block content
           )
     .form-group
       .col-sm-offset-3.col-sm-7
-        a.btn.btn-primary(href=member.url+'/update') Edit 编辑
-        span
-        | 
+        if user.hasAccess('member:edit')
+          a.btn.btn-primary(href=member.url+'/update') Edit 编辑
+          span
+          | 
         a.btn.btn-danger(href='/members') Back 取消

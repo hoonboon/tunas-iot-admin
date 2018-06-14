@@ -13,25 +13,29 @@
       ul.nav.navbar-nav
         li(class=(title == 'Home') ? 'active' : undefined)
           a(href='/') Home
-        if user
+        if user && (user.hasAccess('member:list') || user.hasAccess('member:notifyId'))
           li.dropdown(class=(title == 'Agent') ? 'active' : undefined)
             a.dropdown-toggle(href='#', data-toggle='dropdown')
               span Agent
               i.caret
             ul.dropdown-menu
-              li
-                a(href='/members') Agent List
-              li.divider
-              li
-                a(href='/members/notifyId') Notify Agent ID
+              if user.hasAccess('member:list')
+                li
+                  a(href='/members') Agent List
+                li.divider
+              if user.hasAccess('member:notifyId')
+                li
+                  a(href='/members/notifyId') Notify Agent ID
+                li.divider
       ul.nav.navbar-nav.navbar-right
         if !user
           li(class=(title == 'Login') ? 'active' : undefined)
             a(href='/login') Login
-          // ** open for local development use only **
-          //- li(class=(title == 'Create Account') ? 'active' : undefined)
-          //-   a(href='/signup') Create Account
         else
+          //- ** open for local development use only **
+          if user.hasAccess('user:signup')
+            li(class=(title == 'Create Account') ? 'active' : undefined)
+              a(href='/signup') Create Account
           li.dropdown(class=(title == 'Account Management') ? 'active' : undefined)
             a.dropdown-toggle(href='#', data-toggle='dropdown')
               if user.profile.picture
