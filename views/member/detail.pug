@@ -100,9 +100,21 @@ block content
       .col-sm-7
         select.form-control(disabled=true)
           option(
+            value='MYR415' label='MYR 415'
+            selected=(
+                'MYR415' == member.starterKit.kitAmount
+              ) ? 'selected' : false
+          )
+          option(
             value='MYR440' label='MYR 440'
             selected=(
                 'MYR440' == member.starterKit.kitAmount
+              ) ? 'selected' : false
+          )
+          option(
+            value='RMB640' label='RMB 640'
+            selected=(
+                'RMB640' == member.starterKit.kitAmount
               ) ? 'selected' : false
           )
           option(
