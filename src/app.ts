@@ -30,6 +30,9 @@ import * as contactController from "./controllers/contact";
 // API keys and Passport configuration
 import * as passportConfig from "./config/passport";
 
+// Role Based Access Control configuration
+import * as rbacConfig from "./config/accessControl";
+
 // Create Express server
 const app = express();
 
@@ -100,28 +103,27 @@ app.post("/forgot", userController.postForgot);
 app.get("/reset/:token", userController.getReset);
 app.post("/reset/:token", userController.postReset);
 
-// ** open for local development use only ***
-app.get("/signup", userController.getSignup);
-app.post("/signup", userController.postSignup);
+app.get("/signup", passportConfig.isAuthenticated, rbacConfig.hasAccess("user:signup"), userController.getSignup);
+app.post("/signup", passportConfig.isAuthenticated, rbacConfig.hasAccess("user:signup"), userController.postSignup);
 
 // app.get("/contact", contactController.getContact);
 // app.post("/contact", contactController.postContact);
 
-app.get("/account", passportConfig.isAuthenticated, userController.getAccount);
-app.post("/account/profile", passportConfig.isAuthenticated, userController.postUpdateProfile);
-app.post("/account/password", passportConfig.isAuthenticated, userController.postUpdatePassword);
-app.post("/account/delete", passportConfig.isAuthenticated, userController.postDeleteAccount);
-app.get("/account/unlink/:provider", passportConfig.isAuthenticated, userController.getOauthUnlink);
+app.get("/account", passportConfig.isAuthenticated, rbacConfig.hasAccess("user:updateProfile"), userController.getAccount);
+app.post("/account/profile", passportConfig.isAuthenticated, rbacConfig.hasAccess("user:updateProfile"), userController.postUpdateProfile);
+app.post("/account/password", passportConfig.isAuthenticated, rbacConfig.hasAccess("user:updateProfile"), userController.postUpdatePassword);
+// app.post("/account/delete", passportConfig.isAuthenticated, userController.postDeleteAccount);
+// app.get("/account/unlink/:provider", passportConfig.isAuthenticated, userController.getOauthUnlink);
 
 // Member module
-app.get("/members", passportConfig.isAuthenticated, memberController.getMembers);
-app.get("/member/create", passportConfig.isAuthenticated, memberController.getMemberCreate);
-app.post("/member/create", passportConfig.isAuthenticated, memberController.postMemberCreate);
-app.get("/member/:id", passportConfig.isAuthenticated, memberController.getMemberDetail);
-app.get("/member/:id/update", passportConfig.isAuthenticated, memberController.getMemberUpdate);
-app.post("/member/:id/update", passportConfig.isAuthenticated, memberController.postMemberUpdate);
-app.get("/members/notifyId", passportConfig.isAuthenticated, memberController.getMembersNotifyId);
-app.post("/member/:id/notifyId", passportConfig.isAuthenticated, memberController.postMemberNotifyId);
+app.get("/members", passportConfig.isAuthenticated, rbacConfig.hasAccess("member:list"), memberController.getMembers);
+app.get("/member/create", passportConfig.isAuthenticated, rbacConfig.hasAccess("member:create"), memberController.getMemberCreate);
+app.post("/member/create", passportConfig.isAuthenticated, rbacConfig.hasAccess("member:create"), memberController.postMemberCreate);
+app.get("/member/:id", passportConfig.isAuthenticated, rbacConfig.hasAccess("member:view"), memberController.getMemberDetail);
+app.get("/member/:id/update", passportConfig.isAuthenticated, rbacConfig.hasAccess("member:edit"), memberController.getMemberUpdate);
+app.post("/member/:id/update", passportConfig.isAuthenticated, rbacConfig.hasAccess("member:edit"), memberController.postMemberUpdate);
+app.get("/members/notifyId", passportConfig.isAuthenticated, rbacConfig.hasAccess("member:notifyId"), memberController.getMembersNotifyId);
+app.post("/member/:id/notifyId", passportConfig.isAuthenticated, rbacConfig.hasAccess("member:notifyId"), memberController.postMemberNotifyId);
 
 /**
  * API examples routes.

@@ -1,5 +1,7 @@
 import * as user from "../controllers/user";
 import * as member from "../controllers/member";
+import { Request, Response, NextFunction } from "express";
+import { UserModel } from "../models/User";
 
 // Reference: https://blog.nodeswat.com/implement-access-control-in-node-js-8567e7b484d1
 
@@ -104,3 +106,21 @@ class RBAC {
 
 const rbac = new RBAC(roles);
 export default rbac;
+
+/**
+ * Access Control middleware.
+ */
+export let hasAccess = (accessName: string, params?: any) => {
+    return (req: Request, res: Response, next: NextFunction) => {
+        const user = <UserModel>req.user;
+
+        // TODO: handle params
+        // TODO: use promise
+        if (user.hasAccess(accessName, params)) {
+            next();
+        } else {
+            req.flash("errors", { msg: "Unauthorized Access! Please contact Administrator." });
+            res.redirect("/");
+        }
+    };
+};
