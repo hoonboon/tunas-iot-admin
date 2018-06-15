@@ -4,7 +4,7 @@ import async from "async";
 import request from "request";
 import graph from "fbgraph";
 import { Response, Request, NextFunction } from "express";
-
+import moment from "moment";
 
 /**
  * GET /api
@@ -29,5 +29,15 @@ export let getFacebook = (req: Request, res: Response, next: NextFunction) => {
       title: "Facebook API",
       profile: results
     });
+  });
+};
+
+/**
+ * GET /api/heartbeat
+ * Check server active status
+ */
+export let getHeartbeat = (req: Request, res: Response) => {
+  res.json({
+    heartbeat: moment().format()
   });
 };

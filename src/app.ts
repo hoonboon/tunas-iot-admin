@@ -130,6 +130,7 @@ app.post("/member/:id/notifyId", passportConfig.isAuthenticated, rbacConfig.hasA
  */
 // app.get("/api", apiController.getApi);
 // app.get("/api/facebook", passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getFacebook);
+app.get("/api/heartbeat", apiController.getHeartbeat);
 
 /**
  * OAuth authentication routes. (Sign in)
