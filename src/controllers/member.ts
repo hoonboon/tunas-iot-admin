@@ -380,7 +380,8 @@ export let postMemberUpdate = [
                 // check if nric already used for other Member records
                 Member.findOne({ nric: req.body.nric }, (err, otherMemberWithSameNric) => {
                     if (err) { return next(err); }
-                    if (otherMemberWithSameNric._id !== targetMember._id) {
+                    if (otherMemberWithSameNric
+                        && otherMemberWithSameNric._id !== targetMember._id) {
                         req.flash("errors", { msg: "Other Agent with the same NRIC already exists." });
 
                         async.parallel({
