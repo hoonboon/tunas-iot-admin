@@ -135,9 +135,27 @@ block content
         select.form-control(name='starterKitAmount', id='starterKitAmount', placeholder='Amount')
           if member
             option(
+              value='MYR0' label='MYR 0'
+              selected=(
+                  'MYR0' == member.starterKit.kitAmount
+                ) ? 'selected' : false
+            )
+            option(
+              value='MYR415' label='MYR 415'
+              selected=(
+                  'MYR415' == member.starterKit.kitAmount
+                ) ? 'selected' : false
+            )
+            option(
               value='MYR440' label='MYR 440'
               selected=(
                   'MYR440' == member.starterKit.kitAmount
+                ) ? 'selected' : false
+            )
+            option(
+              value='RMB640' label='RMB 640'
+              selected=(
+                  'RMB640' == member.starterKit.kitAmount
                 ) ? 'selected' : false
             )
             option(
@@ -148,7 +166,16 @@ block content
             )
           else
             option(
+              value='MYR0' label='MYR 0'
+            )
+            option(
+              value='MYR415' label='MYR 415'
+            )
+            option(
               value='MYR440' label='MYR 440'
+            )
+            option(
+              value='RMB640' label='RMB 640'
             )
             option(
               value='RMB680' label='RMB 680'
