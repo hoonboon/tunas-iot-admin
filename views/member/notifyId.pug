@@ -41,17 +41,17 @@ block content
               //- a(href='#', onclick='showMemberInfo(\'' + member._id + '\')') #{member.profile.name} (#{member.profile.nameCh})
               | #{member.profile.nameDisplay}
             td #{member.contact.mobileNo}
-            if (member.isValidMobileNoMy)
-              td(id='lastNotify_' + member._id) #{member.lastNotifyIdDisplay}
-              td 
-                if (member.lastNotifyId)
-                  button.btn.btn-danger(type='button', id='btnSend_' + member._id, onclick='onResend(\'' + member._id + '\')') Resend
-                else
-                  button.btn.btn-success(type='button', id='btnSend_' + member._id, onclick='onSend(\'' + member._id + '\')') Send
-            else
-              td(colspan='2').
-                Please send manually: 
-                <br>#{member.notifyIdMsg}
+              if (member.isValidMobileNoMy)
+                td(id='lastNotify_' + member._id) #{member.lastNotifyIdDisplay}
+                td 
+                  if (member.lastNotifyId)
+                    button.btn.btn-danger(type='button', id='btnSend_' + member._id, onclick='onResend(\'' + member._id + '\')') Resend
+                  else
+                    button.btn.btn-success(type='button', id='btnSend_' + member._id, onclick='onSend(\'' + member._id + '\')') Send
+              else
+                td(colspan='2').
+                  Please send manually: 
+                  <br>#{member.notifyIdMsg}
         else
           tr
             td(colspan='4' align='center') No records found.

@@ -452,6 +452,7 @@ export let getMembersNotifyId = (req: Request, res: Response, next: NextFunction
     }
 
     const query = Member.find();
+    query.populate("starterKit.product");
 
     // filter records
     if (searchJoinDate) {
@@ -506,7 +507,9 @@ export let postMemberNotifyId = [
         const errors = validationResult(req);
 
         if (errors.isEmpty()) {
-            Member.findById(req.params.id, (err, targetMember: MemberModel) => {
+            Member.findById(req.params.id)
+            .populate("starterKit.product")
+            .exec((err, targetMember: MemberModel) => {
                 if (err) { return next(err); }
 
                 if (!targetMember) {

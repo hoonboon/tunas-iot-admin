@@ -157,7 +157,10 @@ memberSchema
 memberSchema
 .virtual("notifyIdMsg")
 .get(function () {
-    const msg = "Tunas IOT: " + this.profile.nameDisplay + " Your Agent ID is " + this._id;
+    let msg = "Tunas IOT 续梦: " + this.profile.nameDisplay + " Agent ID 代理商编号: " + this._id;
+    if (this.starterKit && this.starterKit.product && this.starterKit.product.productCode === "1006") {
+      msg = "Tunas IOT 续梦 (" + this.starterKit.product.productNameCh + "): " + this.profile.nameDisplay + " Agent ID 代理商编号: " + this._id;
+    }
     return msg;
 });
 
