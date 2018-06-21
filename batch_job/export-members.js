@@ -105,11 +105,11 @@ query.exec(function (err, item_list) {
     
     sheet.mergeCells("A2:D2");
     sheet.getCell("A2").value = "Date Join: " + rptFilter.dateJoinFrom.format("YYYY-MM-DD") + " - " + rptFilter.dateJoinTo.format("YYYY-MM-DD");
-    sheet.getCell("A2").font = { size: 8, bold: true };
+    sheet.getCell("A2").font = { bold: true };
     
     sheet.mergeCells("E2:H2");
-    sheet.getCell("E2").value = "Print Date: " + moment().format();
-    sheet.getCell("E2").font = { size: 8, bold: true };
+    sheet.getCell("E2").value = "Print Date: " + moment().format("YYYY-MM-DD HH:mm");
+    sheet.getCell("E2").font = { bold: true };
     
     sheet.addRow([]);
 
@@ -163,7 +163,7 @@ query.exec(function (err, item_list) {
             rowValues[i++] = member.contact.mobileNo;
             rowValues[i++] = member.profile.name;
             rowValues[i++] = member.profile.nameCh;
-            rowValues[i++] = moment(member.createdAt).format();
+            rowValues[i++] = moment(member.createdAt).format("YYYY-MM-DD HH:mm");
             sheet.addRow(rowValues).commit();
         }
     }
