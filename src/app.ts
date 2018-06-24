@@ -25,6 +25,7 @@ import * as userController from "./controllers/user";
 import * as memberController from "./controllers/member";
 import * as apiController from "./controllers/api";
 import * as contactController from "./controllers/contact";
+import * as reportController from "./controllers/report";
 
 
 // API keys and Passport configuration
@@ -125,6 +126,10 @@ app.post("/member/:id/update", passportConfig.isAuthenticated, rbacConfig.hasAcc
 app.get("/members/notifyId", passportConfig.isAuthenticated, rbacConfig.hasAccess("member:notifyId"), memberController.getMembersNotifyId);
 app.post("/member/:id/notifyId", passportConfig.isAuthenticated, rbacConfig.hasAccess("member:notifyId"), memberController.postMemberNotifyId);
 
+// Report module
+app.get("/report/members", passportConfig.isAuthenticated, rbacConfig.hasAccess("report:members"), reportController.getMembers);
+app.get("/report/members/download", passportConfig.isAuthenticated, rbacConfig.hasAccess("report:members"), reportController.getMembersDownload);
+
 /**
  * API examples routes.
  */
@@ -139,5 +144,7 @@ app.get("/api/heartbeat", apiController.getHeartbeat);
 // app.get("/auth/facebook/callback", passport.authenticate("facebook", { failureRedirect: "/login" }), (req, res) => {
 //   res.redirect(req.session.returnTo || "/");
 // });
+
+export const ROOT_DIR = __dirname;
 
 export default app;

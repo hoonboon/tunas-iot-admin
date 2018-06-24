@@ -1,0 +1,31 @@
+extends ../layout
+
+block content
+  .page-header
+    h3
+      if title2
+        = title2
+      else
+        = title
+  p.text-center
+    font(color="red") 
+      i ** Required fields.
+  form.form-horizontal(id='filter-form')
+    input(type='hidden', name='_csrf', value=_csrf)
+    input(type='hidden', name='dateJoinFromDefault', id='dateJoinFromDefault', value=dateJoinFrom)
+    input(type='hidden', name='dateJoinToDefault', id='dateJoinToDefault', value=dateJoinTo)
+    .form-group
+      label.col-sm-3.control-label(for='dateJoinFrom') ** Date Join From
+      .col-sm-7
+        input.form-control(type='date', name='dateJoinFrom', id='dateJoinFrom', placeholder='Date Join From', required, value=dateJoinFrom)
+    .form-group
+      label.col-sm-3.control-label(for='dateJoinTo') ** Date Join To
+      .col-sm-7
+        input.form-control(type='date', name='dateJoinTo', id='dateJoinTo', placeholder='Date Join To', required, value=dateJoinTo)
+    .form-group
+      .col-sm-offset-3.col-sm-7
+        if user.hasAccess('report:members')
+          button.btn.btn-success(type='button', id='btnDownload', onclick='onDownload()') Download
+          span
+          | 
+        a.btn.btn-warning(href='#' onclick='resetForm()') Reset

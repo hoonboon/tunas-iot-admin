@@ -45,7 +45,8 @@ const roles: RoleAccess = {
         can: [
             { name: "member:edit" },
             { name: "member:notifyId" },
-            { name: "member:withdraw" }
+            { name: "member:withdraw" },
+            { name: "report:members" }
         ],
         extends: ["staff_2"]
     },

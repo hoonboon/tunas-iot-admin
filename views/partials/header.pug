@@ -27,6 +27,16 @@
                 li
                   a(href='/members/notifyId') Notify Agent ID
                 li.divider
+        if user && (user.hasAccess('report:members'))
+          li.dropdown(class=(title == 'Report') ? 'active' : undefined)
+            a.dropdown-toggle(href='#', data-toggle='dropdown')
+              span Report
+              i.caret
+            ul.dropdown-menu
+              if user.hasAccess('report:members')
+                li
+                  a(href='/report/members') Agent List
+                li.divider
       ul.nav.navbar-nav.navbar-right
         if !user
           li(class=(title == 'Login') ? 'active' : undefined)

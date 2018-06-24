@@ -1,7 +1,6 @@
 import async from "async";
 import moment from "moment";
 import { Request, Response, NextFunction } from "express";
-import { WriteError } from "mongodb";
 
 import { body, validationResult } from "express-validator/check";
 import { sanitizeBody } from "express-validator/filter";
@@ -472,7 +471,7 @@ export let getMembersNotifyId = (req: Request, res: Response, next: NextFunction
     query.sort([["dateJoin", "ascending"], ["profile.name", "ascending"]]);
 
     // client side script
-    const includeScript = "/js/member/notifyId.js";
+    const includeScripts = ["/js/member/notifyId.js"];
 
     query.exec(function (err, item_list: any) {
             if (err) {
@@ -485,7 +484,7 @@ export let getMembersNotifyId = (req: Request, res: Response, next: NextFunction
                 searchName: searchName,
                 searchJoinDate: searchJoinDate,
                 searchNric: searchNric,
-                includeScript: includeScript
+                includeScripts: includeScripts
             });
         });
 };

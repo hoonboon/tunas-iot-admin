@@ -2,7 +2,7 @@ $(document).ready(function() {
 
 });
 
-function onSend(rowId: string) {
+function onSend(rowId) {
     $("#btnSend_" + rowId).attr("disabled", "disabled");
 
     const prevValue = $("#lastNotify_" + rowId).html();
@@ -32,7 +32,7 @@ function onSend(rowId: string) {
     });
 }
 
-function onResend(rowId: string) {
+function onResend(rowId) {
     if (confirm("Confirm to Resend?")) {
         onSend(rowId);
     }

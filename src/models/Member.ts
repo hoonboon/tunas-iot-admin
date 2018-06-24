@@ -46,7 +46,9 @@ export type MemberModel = mongoose.Document & {
   url: string,
   isValidMobileNoMy: boolean,
   lastNotifyIdDisplay: string,
-  notifyIdMsg: string
+  notifyIdMsg: string,
+  createdAt: Date,
+  updatedAt: Date
 };
 
 const memberSchema = new mongoose.Schema({
