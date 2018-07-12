@@ -61,7 +61,8 @@ export let getMembersDownload = [
       query.select({
           _id: 1, dateJoin: 1, nric: 1,
           "contact.mobileNo": 1, "profile.name": 1, "profile.nameCh": 1,
-          createdAt: 1, "starterKit.product.productCode": 1
+          createdAt: 1, "starterKit.product.productCode": 1,
+          "sponsor.name": 1, "sponsor.orgNo": 1, "sponsor.teamNo": 1
       });
       query.where("dateJoin").gte(dateJoinFrom);
       query.where("dateJoin").lte(dateJoinTo);
@@ -85,6 +86,9 @@ export let getMembersDownload = [
               F: { label: "Name EN", width: 25, align: "left" as ExcelAlign },
               G: { label: "Name CH", width: 10, align: "center" as ExcelAlign },
               H: { label: "Create Date", width: 25, align: "center" as ExcelAlign },
+              I: { label: "Sponsor", width: 10, align: "center" as ExcelAlign },
+              J: { label: "Organization", width: 10, align: "center" as ExcelAlign },
+              K: { label: "Team", width: 10, align: "center" as ExcelAlign },
           }
       };
 
@@ -119,6 +123,9 @@ export let getMembersDownload = [
             rowValues[i++] = member.profile.name;
             rowValues[i++] = member.profile.nameCh;
             rowValues[i++] = moment(member.createdAt).format("YYYY-MM-DD HH:mm");
+            rowValues[i++] = member.sponsor.name;
+            rowValues[i++] = member.sponsor.orgNo;
+            rowValues[i++] = member.sponsor.teamNo;
 
             const sheet = wb.getWorksheet("agents");
             sheet.addRow(rowValues).commit();
@@ -199,20 +206,20 @@ function initExcelFile(reportOptions: ReportOptions) {
   const sheet = wb.addWorksheet(reportOptions.sheetName);
 
   sheet.pageSetup.printTitlesRow = "1:4";
-  sheet.autoFilter = "A4:H4";
+  sheet.autoFilter = "A4:K4";
 
   // Report headers
-  sheet.mergeCells("A1:H1");
+  sheet.mergeCells("A1:K1");
   sheet.getCell("A1").font = { size: 14, bold: true };
   sheet.getCell("A1").value = reportOptions.title;
 
-  sheet.mergeCells("A2:D2");
+  sheet.mergeCells("A2:F2");
   sheet.getCell("A2").value = reportOptions.filterDesc;
   sheet.getCell("A2").font = { bold: true };
 
-  sheet.mergeCells("E2:H2");
-  sheet.getCell("E2").value = "Print Date: " + moment().format("YYYY-MM-DD HH:mm");
-  sheet.getCell("E2").font = { bold: true };
+  sheet.mergeCells("G2:K2");
+  sheet.getCell("G2").value = "Print Date: " + moment().format("YYYY-MM-DD HH:mm");
+  sheet.getCell("G2").font = { bold: true };
 
   sheet.addRow([]);
 
@@ -235,7 +242,7 @@ function initExcelFile(reportOptions: ReportOptions) {
 
   sheet.getCell("A1").alignment = { horizontal: "center", wrapText: true };
   sheet.getCell("A2").alignment = { horizontal: "left", wrapText: true };
-  sheet.getCell("E2").alignment = { horizontal: "right", wrapText: true };
+  sheet.getCell("G2").alignment = { horizontal: "right", wrapText: true };
 
   sheet.getRow(4).commit();
 
