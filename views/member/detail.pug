@@ -10,127 +10,85 @@ block content
     p Agent Id 代理编号: #{memberId}
   #member-detail.form-horizontal
     .form-group
-      label.col-sm-3.control-label Date Join 报单日期
-      .col-sm-7 
-        .form-control #{member.dateJoinDisplay}
+      label.col-sm-3.col-xs-3.control-label Date Join 报单日期
+      .col-sm-7.col-xs-9 
+        .form-control-static #{member.dateJoinDisplay}
     .form-group
-      label.col-sm-3.control-label Name CH 中文姓名
-      .col-sm-7
-        .form-control #{member.profile.nameCh}
+      label.col-sm-3.col-xs-3.control-label Name CH 中文姓名
+      .col-sm-7.col-xs-9
+        .form-control-static #{member.profile.nameCh}
     .form-group
-      label.col-sm-3.control-label Name EN 英文姓名
-      .col-sm-7
-        .form-control #{member.profile.name}
+      label.col-sm-3.col-xs-3.control-label Name EN 英文姓名
+      .col-sm-7.col-xs-9
+        .form-control-static #{member.profile.name}
     .form-group
-      label.col-sm-3.control-label Gender 性别
-      .col-sm-7
-        select.form-control(disabled=true)
-          option(
-            value='M' label='Male 男'
-            selected=(
-                'M' == member.profile.gender
-              ) ? 'selected' : false
-          )
-          option(
-            value='F' label='Female 女'
-            selected=(
-                'F' == member.profile.gender
-              ) ? 'selected' : false
-          )
-          option(
-            value='O' label='Other 其他'
-            selected=(
-                'O' == member.profile.gender
-              ) ? 'selected' : false
-          )
+      label.col-sm-3.col-xs-3.control-label Gender 性别
+      .col-sm-7.col-xs-9
+        select.form-control-static(disabled=true)
+          for option in genderOptions
+            option(label=option.label, value=option.value, selected=option.isSelected)
     .form-group
-      label.col-sm-3.control-label Date of Birth 生日日期
-      .col-sm-7
-        .form-control #{member.profile.dobDisplay}
+      label.col-sm-3.col-xs-3.control-label Date of Birth 生日日期
+      .col-sm-7.col-xs-9
+        .form-control-static #{member.profile.dobDisplay}
     .form-group
-      label.col-sm-3.control-label Mobile No. 手机号码
-      .col-sm-7
-        .form-control #{member.contact.mobileNo}
+      label.col-sm-3.col-xs-3.control-label Mobile No. 手机号码
+      .col-sm-7.col-xs-9
+        .form-control-static #{member.contact.mobileNo}
     .form-group
-      label.col-sm-3.control-label NRIC 身份证号
-      .col-sm-7
-        .form-control #{member.nric}
+      label.col-sm-3.col-xs-3.control-label NRIC 身份证号
+      .col-sm-7.col-xs-9
+        .form-control-static #{member.nric}
     .form-group
-      label.col-sm-3.control-label Bank Account No. 银行帐号
-      .col-sm-7
-        .form-control #{member.bank.accNo}
+      label.col-sm-3.col-xs-3.control-label Bank Account No. 银行帐号
+      .col-sm-7.col-xs-9
+        .form-control-static #{member.bank.accNo}
     .form-group
-      label.col-sm-3.control-label Bank Name 开户行名称
-      .col-sm-7
-        .form-control #{member.bank.bankName}
+      label.col-sm-3.col-xs-3.control-label Bank Name 开户行名称
+      .col-sm-7.col-xs-9
+        .form-control-static #{member.bank.bankName}
     .form-group
-      label.col-sm-3.control-label Bank Address 开户行地址
-      .col-sm-7
-        .form-control #{member.bank.bankAddr}
+      label.col-sm-3.col-xs-3.control-label Bank Address 开户行地址
+      .col-sm-7.col-xs-9
+        .form-control-static #{member.bank.bankAddr}
     .form-group
-      label.col-sm-3.control-label Home Address 发货住址
-      .col-sm-7
-        .form-control #{member.contact.homeAddr}
+      label.col-sm-3.col-xs-3.control-label Home Address 发货住址
+      .col-sm-7.col-xs-9
+        .form-control-static #{member.contact.homeAddr}
     .form-group
-      label.col-sm-3.control-label Wechat ID 国外微信号
-      .col-sm-7
-        .form-control #{member.social.wechat}
+      label.col-sm-3.col-xs-3.control-label Wechat ID 国外微信号
+      .col-sm-7.col-xs-9
+        .form-control-static #{member.social.wechat}
     .form-group
-      label.col-sm-3.control-label Sponsor Name 推荐人
-      .col-sm-7
-        .form-control #{member.sponsor.name}
+      label.col-sm-3.col-xs-3.control-label Sponsor Name 推荐人
+      .col-sm-7.col-xs-9
+        .form-control-static #{member.sponsor.name}
     .form-group
-      label.col-sm-3.control-label Sponsor Contact No. 推荐人电话
-      .col-sm-7
-        .form-control #{member.sponsor.contactNo}
+      label.col-sm-3.col-xs-3.control-label Sponsor Contact No. 推荐人电话
+      .col-sm-7.col-xs-9
+        .form-control-static #{member.sponsor.contactNo}
     .form-group
-      label.col-sm-3.control-label Organization 大区经理
-      .col-sm-7
-        .form-control #{member.sponsor.orgNo}
+      label.col-sm-3.col-xs-3.control-label Organization 大区经理
+      .col-sm-7.col-xs-9
+        .form-control-static #{member.sponsor.orgNo}
     .form-group
-      label.col-sm-3.control-label Team 团队长
-      .col-sm-7
-        .form-control #{member.sponsor.teamNo}
+      label.col-sm-3.col-xs-3.control-label Team 团队长
+      .col-sm-7.col-xs-9
+        .form-control-static #{member.sponsor.teamNo}
     .form-group
-      label.col-sm-3.control-label Starter Kit 产品
-      .col-sm-7
-        .form-control #{member.starterKit.product.productCode} #{member.starterKit.product.productName}  #{member.starterKit.product.productNameCh}
+      label.col-sm-3.col-xs-3.control-label Starter Kit 产品
+      .col-sm-7.col-xs-9
+        select.form-control-static(disabled=true)
+          for option in kitProductOptions
+            option(label=option.label, value=option.value, selected=option.isSelected)
     .form-group
-      label.col-sm-3.control-label Amount 金额
-      .col-sm-7
-        select.form-control(disabled=true)
-          option(
-            value='MYR0' label='MYR 0'
-            selected=(
-                'MYR0' == member.starterKit.kitAmount
-              ) ? 'selected' : false
-          )
-          option(
-            value='MYR415' label='MYR 415'
-            selected=(
-                'MYR415' == member.starterKit.kitAmount
-              ) ? 'selected' : false
-          )
-          option(
-            value='MYR440' label='MYR 440'
-            selected=(
-                'MYR440' == member.starterKit.kitAmount
-              ) ? 'selected' : false
-          )
-          option(
-            value='RMB640' label='RMB 640'
-            selected=(
-                'RMB640' == member.starterKit.kitAmount
-              ) ? 'selected' : false
-          )
-          option(
-            value='RMB680' label='RMB 680'
-            selected=(
-                'RMB680' == member.starterKit.kitAmount
-              ) ? 'selected' : false
-          )
+      label.col-sm-3.col-xs-3.control-label Amount 金额
+      .col-sm-7.col-xs-9
+        select.form-control-static(disabled=true)
+          for option in kitAmountOptions
+            option(label=option.label, value=option.value, selected=option.isSelected)
     .form-group
-      .col-sm-offset-3.col-sm-7
+      .col-sm-offset-3.col-sm-7.col-xs-9
         if user.hasAccess('member:edit')
           a.btn.btn-primary(href=member.url+'/update') Edit 编辑
           span

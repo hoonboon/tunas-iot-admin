@@ -6,8 +6,9 @@ import { body, validationResult } from "express-validator/check";
 import { sanitizeBody } from "express-validator/filter";
 
 import { default as Member, MemberModel } from "../models/Member";
-import { default as Product } from "../models/Product";
+import { default as Product, ProductModel } from "../models/Product";
 import * as isms from "../service/isms";
+import * as selectOption from "../util/selectOption";
 
 /**
  * GET /members
@@ -115,7 +116,9 @@ export let getMemberCreate = (req: Request, res: Response, next: NextFunction) =
             title: "Agent",
             title2: "Create Agent 注册代理",
             member: memberInput,
-            products: results.products
+            kitProductOptions: selectOption.OPTIONS_STARTER_KIT_PRODUCT(results.products as ProductModel[]),
+            genderOptions: selectOption.OPTIONS_GENDER(),
+            kitAmountOptions: selectOption.OPTIONS_STARTER_KIT_AMOUNT()
         });
 
     });
@@ -201,11 +204,22 @@ export let postMemberCreate = [
                     }, function(err, results) {
                         if (err) { return next(err); }
 
+                        const genderOptions = selectOption.OPTIONS_GENDER();
+                        selectOption.markSelectedOption((<MemberModel>memberInput).profile.gender, genderOptions);
+
+                        const kitProductOptions = selectOption.OPTIONS_STARTER_KIT_PRODUCT(results.products as ProductModel[]);
+                        selectOption.markSelectedOption((<MemberModel>memberInput).starterKit.product.toString(), kitProductOptions);
+
+                        const kitAmountOptions = selectOption.OPTIONS_STARTER_KIT_AMOUNT();
+                        selectOption.markSelectedOption((<MemberModel>memberInput).starterKit.kitAmount, kitAmountOptions);
+
                         res.render("member/form", {
                             title: "Agent",
                             title2: "Create Agent 注册代理",
                             member: memberInput,
-                            products: results.products
+                            genderOptions: genderOptions,
+                            kitProductOptions: kitProductOptions,
+                            kitAmountOptions: kitAmountOptions
                         });
 
                     });
@@ -230,11 +244,22 @@ export let postMemberCreate = [
             }, function(err, results) {
                 if (err) { return next(err); }
 
+                const genderOptions = selectOption.OPTIONS_GENDER();
+                selectOption.markSelectedOption((<MemberModel>memberInput).profile.gender, genderOptions);
+
+                const kitProductOptions = selectOption.OPTIONS_STARTER_KIT_PRODUCT(results.products as ProductModel[]);
+                selectOption.markSelectedOption((<MemberModel>memberInput).starterKit.product.toString(), kitProductOptions);
+
+                const kitAmountOptions = selectOption.OPTIONS_STARTER_KIT_AMOUNT();
+                selectOption.markSelectedOption((<MemberModel>memberInput).starterKit.kitAmount, kitAmountOptions);
+
                 res.render("member/form", {
                     title: "Agent",
                     title2: "Create Agent 注册代理",
                     member: memberInput,
-                    products: results.products
+                    genderOptions: genderOptions,
+                    kitProductOptions: kitProductOptions,
+                    kitAmountOptions: kitAmountOptions
                 });
 
             });
@@ -248,15 +273,37 @@ export let postMemberCreate = [
  */
 export let getMemberDetail = (req: Request, res: Response, next: NextFunction) => {
     Member.findById(req.params.id)
-    .populate("starterKit.product")
     .exec((err, memberDb) => {
         if (err) { return next(err); }
         if (memberDb) {
-            res.render("member/detail", {
-                title: "Agent",
-                title2: "Agent Detail 代理资料",
-                member: memberDb,
-                memberId: memberDb._id
+            async.parallel({
+                // get product options
+                products: function(callback) {
+                    Product.find({ status: "A" })
+                        .sort("productCode")
+                        .exec(callback);
+                }
+            }, function(err, results) {
+                if (err) { return next(err); }
+
+                const genderOptions = selectOption.OPTIONS_GENDER();
+                selectOption.markSelectedOption((<MemberModel>memberDb).profile.gender, genderOptions);
+
+                const kitProductOptions = selectOption.OPTIONS_STARTER_KIT_PRODUCT(results.products as ProductModel[]);
+                selectOption.markSelectedOption((<MemberModel>memberDb).starterKit.product.toString(), kitProductOptions);
+
+                const kitAmountOptions = selectOption.OPTIONS_STARTER_KIT_AMOUNT();
+                selectOption.markSelectedOption((<MemberModel>memberDb).starterKit.kitAmount, kitAmountOptions);
+
+                res.render("member/detail", {
+                    title: "Agent",
+                    title2: "Agent Detail 代理资料",
+                    member: memberDb,
+                    memberId: memberDb._id,
+                    genderOptions: genderOptions,
+                    kitProductOptions: kitProductOptions,
+                    kitAmountOptions: kitAmountOptions
+                });
             });
         } else {
             req.flash("errors", { msg: "Agent not found." });
@@ -291,12 +338,23 @@ export let getMemberUpdate = (req: Request, res: Response, next: NextFunction) =
 
         const memberDb = <MemberModel>results.member;
 
+        const genderOptions = selectOption.OPTIONS_GENDER();
+        selectOption.markSelectedOption((<MemberModel>memberDb).profile.gender, genderOptions);
+
+        const kitProductOptions = selectOption.OPTIONS_STARTER_KIT_PRODUCT(results.products as ProductModel[]);
+        selectOption.markSelectedOption((<MemberModel>memberDb).starterKit.product.toString(), kitProductOptions);
+
+        const kitAmountOptions = selectOption.OPTIONS_STARTER_KIT_AMOUNT();
+        selectOption.markSelectedOption((<MemberModel>memberDb).starterKit.kitAmount, kitAmountOptions);
+
         res.render("member/form", {
             title: "Agent",
             title2: "Edit Agent Detail 代理资料编辑",
             member: memberDb,
             memberId: memberDb._id,
-            products: results.products
+            genderOptions: genderOptions,
+            kitProductOptions: kitProductOptions,
+            kitAmountOptions: kitAmountOptions
         });
 
     });
@@ -393,11 +451,22 @@ export let postMemberUpdate = [
                         }, function(err, results) {
                             if (err) { return next(err); }
 
+                            const genderOptions = selectOption.OPTIONS_GENDER();
+                            selectOption.markSelectedOption((<MemberModel>memberInput).profile.gender, genderOptions);
+
+                            const kitProductOptions = selectOption.OPTIONS_STARTER_KIT_PRODUCT(results.products as ProductModel[]);
+                            selectOption.markSelectedOption((<MemberModel>memberInput).starterKit.product.toString(), kitProductOptions);
+
+                            const kitAmountOptions = selectOption.OPTIONS_STARTER_KIT_AMOUNT();
+                            selectOption.markSelectedOption((<MemberModel>memberInput).starterKit.kitAmount, kitAmountOptions);
+
                             res.render("member/form", {
                                 title: "Agent",
                                 title2: "Edit Agent Detail 代理资料编辑",
                                 member: memberInput,
-                                products: results.products
+                                genderOptions: genderOptions,
+                                kitProductOptions: kitProductOptions,
+                                kitAmountOptions: kitAmountOptions
                             });
 
                         });
@@ -423,12 +492,23 @@ export let postMemberUpdate = [
             }, function(err, results) {
                 if (err) { return next(err); }
 
+                const genderOptions = selectOption.OPTIONS_GENDER();
+                selectOption.markSelectedOption((<MemberModel>memberInput).profile.gender, genderOptions);
+
+                const kitProductOptions = selectOption.OPTIONS_STARTER_KIT_PRODUCT(results.products as ProductModel[]);
+                selectOption.markSelectedOption((<MemberModel>memberInput).starterKit.product.toString(), kitProductOptions);
+
+                const kitAmountOptions = selectOption.OPTIONS_STARTER_KIT_AMOUNT();
+                selectOption.markSelectedOption((<MemberModel>memberInput).starterKit.kitAmount, kitAmountOptions);
+
                 res.render("member/form", {
                     title: "Agent",
                     title2: "Edit Agent Detail 代理资料编辑",
                     member: memberInput,
                     memberId: memberInput._id,
-                    products: results.products
+                    genderOptions: genderOptions,
+                    kitProductOptions: kitProductOptions,
+                    kitAmountOptions: kitAmountOptions
                 });
 
             });

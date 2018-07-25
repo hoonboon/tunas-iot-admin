@@ -36,35 +36,8 @@ block content
       label.col-sm-3.control-label(for='gender') Gender 性别
       .col-sm-7
         select.form-control(name='gender', id='gender', placeholder='Gender')
-          if member
-            option(
-              value='M' label='Male 男'
-              selected=(
-                  'M' == member.profile.gender
-                ) ? 'selected' : false
-            )
-            option(
-              value='F' label='Female 女'
-              selected=(
-                  'F' == member.profile.gender
-                ) ? 'selected' : false
-            )
-            option(
-              value='O' label='Other 其他'
-              selected=(
-                  'O' == member.profile.gender
-                ) ? 'selected' : false
-            )
-          else
-            option(
-              value='M' label='Male 男'
-            )
-            option(
-              value='F' label='Female 女'
-            )
-            option(
-              value='O' label='Other 其他'
-            )
+          for option in genderOptions
+            option(label=option.label, value=option.value, selected=option.isSelected)
     .form-group
       label.col-sm-3.control-label(for='dob') ** Date of Birth 生日日期
       .col-sm-7
@@ -117,69 +90,14 @@ block content
       label.col-sm-3.control-label(for='starterKitCode') Starter Kit 产品
       .col-sm-7
         select.form-control(name='starterProduct', id='starterProduct', placeholder='Starter Kit')
-          if products
-            for product in products
-              if member && member.starterKit.product
-                option(
-                  value=product._id 
-                  selected=(
-                    product._id.toString() == member.starterKit.product
-                    || product._id.toString() == member.starterKit.product._id
-                  ) ? 'selected' : false
-                ) #{product.productName} #{product.productNameCh}
-              else
-                option(value=product._id) #{product.productName}  #{product.productNameCh}
+          for option in kitProductOptions
+            option(label=option.label, value=option.value, selected=option.isSelected)
     .form-group
       label.col-sm-3.control-label(for='starterKitAmount') Amount 金额
       .col-sm-7
         select.form-control(name='starterKitAmount', id='starterKitAmount', placeholder='Amount')
-          if member
-            option(
-              value='MYR0' label='MYR 0'
-              selected=(
-                  'MYR0' == member.starterKit.kitAmount
-                ) ? 'selected' : false
-            )
-            option(
-              value='MYR415' label='MYR 415'
-              selected=(
-                  'MYR415' == member.starterKit.kitAmount
-                ) ? 'selected' : false
-            )
-            option(
-              value='MYR440' label='MYR 440'
-              selected=(
-                  'MYR440' == member.starterKit.kitAmount
-                ) ? 'selected' : false
-            )
-            option(
-              value='RMB640' label='RMB 640'
-              selected=(
-                  'RMB640' == member.starterKit.kitAmount
-                ) ? 'selected' : false
-            )
-            option(
-              value='RMB680' label='RMB 680'
-              selected=(
-                  'RMB680' == member.starterKit.kitAmount
-                ) ? 'selected' : false
-            )
-          else
-            option(
-              value='MYR0' label='MYR 0'
-            )
-            option(
-              value='MYR415' label='MYR 415'
-            )
-            option(
-              value='MYR440' label='MYR 440'
-            )
-            option(
-              value='RMB640' label='RMB 640'
-            )
-            option(
-              value='RMB680' label='RMB 680'
-            )
+          for option in kitAmountOptions
+            option(label=option.label, value=option.value, selected=option.isSelected)
     .form-group
       .col-sm-offset-3.col-sm-7
         if user.hasAccess('member:create') || user.hasAccess('member:edit')
