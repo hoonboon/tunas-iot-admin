@@ -9,19 +9,27 @@ import { default as Member, MemberModel } from "../models/Member";
 import { default as Product, ProductModel } from "../models/Product";
 import * as isms from "../service/isms";
 import * as selectOption from "../util/selectOption";
+import { PageInfo, getNewPageInfo } from "../util/pagination";
+
+const DEFAULT_ROW_PER_PAGE: number = 10;
 
 /**
  * GET /members
  * Member listing page.
  */
 export let getMembers = (req: Request, res: Response, next: NextFunction) => {
-    let searchJoinDate = req.query.searchJoinDate;
-    const searchName = req.query.searchName;
-    const searchNric = req.query.searchNric;
+    const searchJoinDate: string = req.query.searchJoinDate;
+    const searchName: string = req.query.searchName;
+    const searchNric: string = req.query.searchNric;
 
-    // default filter
-    if (!searchJoinDate && !searchName && !searchNric) {
-        searchJoinDate = moment().format("YYYY-MM-DD");
+    let newPageNo: number = parseInt(req.query.newPageNo);
+    if (!newPageNo) {
+        newPageNo = 1; // default
+    }
+
+    let rowPerPage: number = parseInt(req.query.rowPerPage);
+    if (!rowPerPage) {
+        rowPerPage = DEFAULT_ROW_PER_PAGE; // default
     }
 
     const query = Member.find();
@@ -41,20 +49,51 @@ export let getMembers = (req: Request, res: Response, next: NextFunction) => {
         query.where("nric").regex(regex);
     }
 
-    query.sort([["dateJoin", "ascending"], ["profile.name", "ascending"]]);
+    let pageInfo: PageInfo;
 
-    query.exec(function (err, item_list: any) {
-            if (err) {
-                return next(err);
+    query.count()
+        .then(function(count: number) {
+            if (count > 0) {
+                pageInfo = getNewPageInfo(count, rowPerPage, newPageNo);
+
+                query.find();
+                query.skip(pageInfo.rowNoStart - 1);
+                query.limit(rowPerPage);
+                query.sort([["dateJoin", "descending"], ["profile.name", "ascending"]]);
+                return query.exec();
+            } else {
+                Promise.resolve();
             }
+        })
+        .then(function (item_list: any) {
+            let rowPerPageOptions, pageNoOptions;
+            if (pageInfo) {
+                rowPerPageOptions = selectOption.OPTIONS_ROW_PER_PAGE();
+                selectOption.markSelectedOption(rowPerPage.toString(), rowPerPageOptions);
+
+                pageNoOptions = selectOption.OPTIONS_PAGE_NO(pageInfo.totalPageNo);
+                selectOption.markSelectedOption(pageInfo.curPageNo.toString(), pageNoOptions);
+            }
+
+            // client side script
+            const includeScripts = ["/js/member/list.js", "/js/util/pagination.js"];
+
             res.render("member/list", {
                 title: "Agent",
                 title2: "Agent List 代理",
                 member_list: item_list,
                 searchName: searchName,
                 searchJoinDate: searchJoinDate,
-                searchNric: searchNric
+                searchNric: searchNric,
+                rowPerPageOptions: rowPerPageOptions,
+                pageNoOptions: pageNoOptions,
+                pageInfo: pageInfo,
+                includeScripts: includeScripts
             });
+        })
+        .catch(function(error) {
+            console.error(error);
+            return next(error);
         });
 };
 

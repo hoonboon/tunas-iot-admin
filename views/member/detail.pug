@@ -26,7 +26,11 @@ block content
       .col-sm-7.col-xs-9
         select.form-control-static(disabled=true)
           for option in genderOptions
-            option(label=option.label, value=option.value, selected=option.isSelected)
+            option(
+              label=option.label, 
+              value=option.value, 
+              selected=(option.isSelected ? 'selected' : false)
+            ) #{option.label}
     .form-group
       label.col-sm-3.col-xs-3.control-label Date of Birth 生日日期
       .col-sm-7.col-xs-9
@@ -80,13 +84,21 @@ block content
       .col-sm-7.col-xs-9
         select.form-control-static(disabled=true)
           for option in kitProductOptions
-            option(label=option.label, value=option.value, selected=option.isSelected)
+            option(
+              label=option.label, 
+              value=option.value, 
+              selected=(option.isSelected ? 'selected' : false)
+            ) #{option.label}
     .form-group
       label.col-sm-3.col-xs-3.control-label Amount 金额
       .col-sm-7.col-xs-9
         select.form-control-static(disabled=true)
           for option in kitAmountOptions
-            option(label=option.label, value=option.value, selected=option.isSelected)
+            option(
+              label=option.label, 
+              value=option.value, 
+              selected=(option.isSelected ? 'selected' : false)
+            ) #{option.label}
     .form-group
       .col-sm-offset-3.col-sm-7.col-xs-9
         if user.hasAccess('member:edit')

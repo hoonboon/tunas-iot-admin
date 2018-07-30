@@ -13,7 +13,10 @@ block content
 
   #search.panel.panel-default
     .panel-body
-      form.form-inline
+      form.form-inline(id='searchForm')
+        if (pageInfo && pageInfo.totalRow > 0)
+          input(type='hidden', id='newPageNo', name='newPageNo')
+          input(type='hidden', id='rowPerPage', name='rowPerPage', value=(pageInfo.rowPerPage))
         .form-group
           label(for='searchJoinDate') Join Date: 
           input.form-control(type='date', name='searchJoinDate', id='searchJoinDate', placeholder='Search...', value=searchJoinDate)
@@ -29,6 +32,8 @@ block content
   p 
 
   #listing.table-wrap
+    include ../partials/pagination.pug
+    
     table.table.table-striped
       thead
         tr
@@ -37,16 +42,19 @@ block content
           th Date Join 报单日期
           th Mobile No. 手机号码
       tbody
-        each member in member_list
-          tr
-            td 
-              if user.hasAccess('member:view')
-                a(href=member.url) #{member.profile.nameDisplay}
-              else
-                | #{member.profile.nameDisplay}
-            td #{member.nric}
-            td #{member.dateJoinDisplay}
-            td #{member.contact.mobileNo}
+        if member_list
+          each member in member_list
+            tr
+              td 
+                if user.hasAccess('member:view')
+                  a(href=member.url) #{member.profile.nameDisplay}
+                else
+                  | #{member.profile.nameDisplay}
+              td #{member.nric}
+              td #{member.dateJoinDisplay}
+              td #{member.contact.mobileNo}
         else
           tr
             td(colspan='4' align='center') No records found.
+
+    include ../partials/pagination.pug

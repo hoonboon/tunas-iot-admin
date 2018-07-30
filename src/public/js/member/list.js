@@ -1,0 +1,3 @@
+function submitViewList() {
+    $("#searchForm").submit();
+}
