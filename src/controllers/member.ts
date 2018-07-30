@@ -560,13 +560,18 @@ export let postMemberUpdate = [
  * Member listing page - Notify Member ID.
  */
 export let getMembersNotifyId = (req: Request, res: Response, next: NextFunction) => {
-    let searchJoinDate = req.query.searchJoinDate;
-    const searchName = req.query.searchName;
-    const searchNric = req.query.searchNric;
+    const searchJoinDate: string = req.query.searchJoinDate;
+    const searchName: string = req.query.searchName;
+    const searchNric: string = req.query.searchNric;
 
-    // default filter
-    if (!searchJoinDate && !searchName && !searchNric) {
-        searchJoinDate = moment().format("YYYY-MM-DD");
+    let newPageNo: number = parseInt(req.query.newPageNo);
+    if (!newPageNo) {
+        newPageNo = 1; // default
+    }
+
+    let rowPerPage: number = parseInt(req.query.rowPerPage);
+    if (!rowPerPage) {
+        rowPerPage = DEFAULT_ROW_PER_PAGE; // default
     }
 
     const query = Member.find();
@@ -587,15 +592,35 @@ export let getMembersNotifyId = (req: Request, res: Response, next: NextFunction
         query.where("nric").regex(regex);
     }
 
-    query.sort([["dateJoin", "ascending"], ["profile.name", "ascending"]]);
+    let pageInfo: PageInfo;
 
-    // client side script
-    const includeScripts = ["/js/member/notifyId.js"];
+    query.count()
+        .then(function(count: number) {
+            if (count > 0) {
+                pageInfo = getNewPageInfo(count, rowPerPage, newPageNo);
 
-    query.exec(function (err, item_list: any) {
-            if (err) {
-                return next(err);
+                query.find();
+                query.skip(pageInfo.rowNoStart - 1);
+                query.limit(rowPerPage);
+                query.sort([["dateJoin", "descending"], ["profile.name", "ascending"]]);
+                return query.exec();
+            } else {
+                Promise.resolve();
             }
+        })
+        .then(function (item_list: any) {
+            let rowPerPageOptions, pageNoOptions;
+            if (pageInfo) {
+                rowPerPageOptions = selectOption.OPTIONS_ROW_PER_PAGE();
+                selectOption.markSelectedOption(rowPerPage.toString(), rowPerPageOptions);
+
+                pageNoOptions = selectOption.OPTIONS_PAGE_NO(pageInfo.totalPageNo);
+                selectOption.markSelectedOption(pageInfo.curPageNo.toString(), pageNoOptions);
+            }
+
+            // client side script
+            const includeScripts = ["/js/member/notifyId.js", "/js/util/pagination.js"];
+
             res.render("member/notifyId", {
                 title: "Agent",
                 title2: "Notify Agent ID 代理编号通知",
@@ -603,9 +628,17 @@ export let getMembersNotifyId = (req: Request, res: Response, next: NextFunction
                 searchName: searchName,
                 searchJoinDate: searchJoinDate,
                 searchNric: searchNric,
+                rowPerPageOptions: rowPerPageOptions,
+                pageNoOptions: pageNoOptions,
+                pageInfo: pageInfo,
                 includeScripts: includeScripts
             });
+        })
+        .catch(function(error) {
+            console.error(error);
+            return next(error);
         });
+
 };
 
 /**

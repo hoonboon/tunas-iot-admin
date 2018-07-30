@@ -11,7 +11,10 @@ block content
 
   #search.panel.panel-default
     .panel-body
-      form.form-inline
+      form.form-inline(id='searchForm')
+        if (pageInfo && pageInfo.totalRow > 0)
+          input(type='hidden', id='newPageNo', name='newPageNo')
+          input(type='hidden', id='rowPerPage', name='rowPerPage', value=(pageInfo.rowPerPage))
         .form-group
           label(for='searchJoinDate') Join Date: 
           input.form-control(type='date', name='searchJoinDate', id='searchJoinDate', placeholder='Search...', value=searchJoinDate)
@@ -27,6 +30,8 @@ block content
   p
 
   #listing.table-wrap
+    include ../partials/pagination.pug
+
     table.table.table-striped
       thead
         tr
@@ -35,36 +40,26 @@ block content
           th Last Sent 最近发送
           th 
       tbody
-        each member in member_list
-          tr
-            td 
-              //- a(href='#', onclick='showMemberInfo(\'' + member._id + '\')') #{member.profile.name} (#{member.profile.nameCh})
-              | #{member.profile.nameDisplay}
-            td #{member.contact.mobileNo}
-              if (member.isValidMobileNoMy)
-                td(id='lastNotify_' + member._id) #{member.lastNotifyIdDisplay}
-                td 
-                  if (member.lastNotifyId)
-                    button.btn.btn-danger(type='button', id='btnSend_' + member._id, onclick='onResend(\'' + member._id + '\')') Resend
-                  else
-                    button.btn.btn-success(type='button', id='btnSend_' + member._id, onclick='onSend(\'' + member._id + '\')') Send
-              else
-                td(colspan='2').
-                  Please send manually: 
-                  <br>#{member.notifyIdMsg}
+        if member_list
+          each member in member_list
+            tr
+              td 
+                //- a(href='#', onclick='showMemberInfo(\'' + member._id + '\')') #{member.profile.name} (#{member.profile.nameCh})
+                | #{member.profile.nameDisplay}
+              td #{member.contact.mobileNo}
+                if (member.isValidMobileNoMy)
+                  td(id='lastNotify_' + member._id) #{member.lastNotifyIdDisplay}
+                  td 
+                    if (member.lastNotifyId)
+                      button.btn.btn-danger(type='button', id='btnSend_' + member._id, onclick='onResend(\'' + member._id + '\')') Resend
+                    else
+                      button.btn.btn-success(type='button', id='btnSend_' + member._id, onclick='onSend(\'' + member._id + '\')') Send
+                else
+                  td(colspan='2').
+                    Please send manually: 
+                    <br>#{member.notifyIdMsg}
         else
           tr
             td(colspan='4' align='center') No records found.
-
-  //- #member-info.modal.fade(tabindex='-1')
-  //-   .modal-dialog
-  //-     .modal-content
-  //-       .modal-header
-  //-         button.close(type='button', data-dismiss='modal')
-  //-           span &times;
-  //-         h4 Modal Title
-  //-       .modal-body
-  //-         p One fine body... 
-  //-       .modal-footer
-  //-         button.btn.btn-default(type='button', data-dismiss='modal') Close
-  //-         button.btn.btn-primary(type='button') Save Changes
+    
+    include ../partials/pagination.pug

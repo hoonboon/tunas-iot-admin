@@ -38,6 +38,10 @@ function onResend(rowId) {
     }
 }
 
+function submitViewList() {
+    $("#searchForm").submit();
+}
+
 // function showMemberInfo(memberId: string) {
 //     $("#member-info").modal("show");
 // }
