@@ -17,6 +17,7 @@ if (pageInfo && pageInfo.totalRow > 0)
         onclick='goToPage(' + (pageInfo.curPageNo - 1) + ')'
       )
         span.glyphicon.glyphicon-chevron-left
+      | 
       button.btn.btn-primary(
         id='btnNextPage', 
         disabled=(pageInfo.hasNextPage ? false : 'disabled'),
